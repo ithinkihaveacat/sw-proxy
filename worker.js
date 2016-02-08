@@ -163,6 +163,83 @@ function varyMatch(res, req) {
   });
 }
 
+function Proxy(cache, reqFn, resFn) {
+  this.cache = cache;
+  this.reqFn = reqFn;
+  this.resFn = resFn;
+}
+
+Proxy.prototype.add = function (req) {
+  var cache = this.cache;
+  var resFn = this.resFn;
+  return fetch(req).then(function (res) {
+    if (resFn) {
+      res = resFn(res);
+    }
+    if (canCache(res)) {
+      caches.open(cache).then(function (c) {
+        c.put(req, res.clone());
+      });
+    }
+    return res;
+  });
+}
+
+Proxy.prototype.fetch = function (req) {
+
+  if (this.reqFn) {
+    req = this.reqFn(req);
+  }
+
+  if (!wantsCache(req)) {
+    return fetch(req);
+  }
+
+  var add = this.add.bind(this);
+  return caches.open(this.cache).then(function (c) {
+    return c.match(req).then(function (res) {
+      if (res) {
+        if (isFresh(res, expiresAt(res))) {
+          console.log(req.url, "A1");
+          return res;
+        } else if (isFresh(res, staleWhileRevalidateAt(res))) {
+          console.log(req.url, "A2");
+          add(req);
+          return res;
+        } else {
+          return add(req)
+            .then(function (r) {
+              if (r.status < 500) {
+                console.log(req.url, "B1");
+                return r;
+              } else {
+                console.log(req.url, "B2");
+                return isFresh(res, staleIfErrorAt(res)) ? res : r;
+              }
+            })
+            .catch(function (r) {
+              // TODO Handle authentication errors
+              console.log(req.url, "B3");
+              return isFresh(res, staleIfErrorAt(res)) ? res : Promise.reject(r);
+            });
+        }
+      } else {
+        if (onlyIfCached(req)) {
+          console.log(req.url, "C");
+          return new Response("NOT CACHED", {
+            status: 504,
+            statusText: "Resource not cached"
+          });
+        } else {
+          console.log(req.url, "D");
+          return add(req);
+        }
+      }
+    });
+  });
+
+}
+
 function warm(c) {
   var req = new Request("/foo.txt");
   var res = new Response("hello", {
@@ -213,84 +290,6 @@ self.addEventListener('activate', function (event) {
   console.log("ACTIVATING " + VERSION);
   event.waitUntil(self.clients.claim());
 });
-
-function Proxy(cache, reqFn, resFn) {
-  this.cache = cache;
-  this.reqFn = reqFn;
-  this.resFn = resFn;
-}
-
-Proxy.prototype.add = function (req) {
-  var cache = this.cache;
-  var resFn = this.resFn;
-  return fetch(req).then(function (res) {
-    if (resFn) {
-      res = resFn(res);
-    }
-    if (canCache(res)) {
-      caches.open(cache).then(function (c) {
-        c.put(req, res.clone());
-      });
-    }
-    return res;
-  });
-}
-
-Proxy.prototype.fetch = function (req) {
-
-  if (this.reqFn) {
-    req = this.reqFn(req);
-  }
-
-  if (!wantsCache(req)) {
-    return fetch(req);
-  }
-
-  var add = this.add.bind(this);
-  return caches.open(this.cache).then(function (c) {
-    return c.match(req).then(function (res) {
-      if (res) {
-        if (isFresh(res, expiresAt(res))) {
-          console.log(req.url, "A1");
-          return res;
-        }
-        if (isFresh(res, staleWhileRevalidateAt(res))) {
-          console.log(req.url, "A2");
-          add(req);
-          return res;
-        } else {
-          return add(req)
-            .then(function (r) {
-              if (r.status < 500) {
-                console.log(req.url, "B1");
-                return r;
-              } else {
-                console.log(req.url, "B2");
-                return isFresh(res, staleIfErrorAt(res)) ? res : r;
-              }
-            })
-            .catch(function (r) {
-              // TODO Handle authentication errors
-              console.log(req.url, "B3");
-              return isFresh(res, staleIfErrorAt(res)) ? res : Promise.reject(r);
-            });
-        }
-      } else {
-        if (onlyIfCached(req)) {
-          console.log(req.url, "C");
-          return new Response("NOT CACHED", {
-            status: 504,
-            statusText: "Resource not cached"
-          });
-        } else {
-          console.log(req.url, "D");
-          return add(req);
-        }
-      }
-    });
-  });
-
-}
 
 self.addEventListener('fetch', function (event) {
   console.log('FETCH', event.request.url);
