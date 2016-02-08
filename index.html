@@ -1,0 +1,39 @@
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('worker.js').then(function(r) {
+        console.log('ServiceWorker registered with scope: ', r.scope);
+      }).catch(function(e) {
+        console.log('ServiceWorker could not be registered: ', e);
+      });
+    }
+    setTimeout(function () {
+      console.log("hihihi");
+      document.getElementById("foo").src = "chinese.png";
+      fetch("/bar.txt", {
+        headers: {
+          "cache-control": "only-if-cached"
+        }
+      }).then(function (r) {
+        console.log(r);
+      });
+      fetch("/foo.txt", {
+        headers: {
+          // "cache-control": "no-cache"
+        }
+      }).then(function (r) {
+        console.log(r);
+      });
+    }, 3000);
+  </script>
+</head>
+
+<body>
+  <h1><a href="/?next">service-worker</a></h1>
+  <img id="foo">
+</body>
+
+</html>
