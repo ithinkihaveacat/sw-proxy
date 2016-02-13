@@ -170,8 +170,10 @@ function Proxy(cache, reqFn, resFn) {
 }
 
 Proxy.prototype.add = function (req) {
+
   var cache = this.cache;
   var resFn = this.resFn;
+
   return fetch(req).then(function (res) {
     if (resFn) {
       res = resFn(res);
@@ -183,19 +185,21 @@ Proxy.prototype.add = function (req) {
     }
     return res;
   });
+
 }
 
 Proxy.prototype.fetch = function (req) {
+
+  var add = this.add.bind(this);
 
   if (this.reqFn) {
     req = this.reqFn(req);
   }
 
   if (!wantsCache(req)) {
-    return fetch(req);
+    return add(req);
   }
 
-  var add = this.add.bind(this);
   return caches.open(this.cache).then(function (c) {
     return c.match(req).then(function (res) {
       if (res) {
@@ -241,17 +245,16 @@ Proxy.prototype.fetch = function (req) {
 }
 
 function warm(c) {
-  var req = new Request("/foo.txt");
   var res = new Response("hello", {
     status: 200,
     statusText: "OK",
     headers: {
-      "cache-control": "max-age=86400",
+      "cache-control": "max-age=864000",
       "content-type": "text/plain",
       "date": "Fri, 05 Feb 2016 12:32:21 GMT"
     }
   });
-  return c.put(req, res).then(function () {
+  return c.put(new Request("/foo.txt"), res).then(function () {
     return c;
   });
 }

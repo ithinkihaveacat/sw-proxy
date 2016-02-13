@@ -12,14 +12,14 @@
     }
     setTimeout(function () {
       console.log("hihihi");
-      document.getElementById("foo").src = "chinese.png";
-      fetch("/bar.txt", {
-        headers: {
-          "cache-control": "only-if-cached"
-        }
-      }).then(function (r) {
-        console.log(r);
-      });
+      // document.getElementById("foo").src = "chinese.png";
+      // fetch("/bar.txt", {
+      //   headers: {
+      //     "cache-control": "only-if-cached"
+      //   }
+      // }).then(function (r) {
+      //   console.log(r);
+      // });
       fetch("/foo.txt", {
         headers: {
           // "cache-control": "no-cache"
