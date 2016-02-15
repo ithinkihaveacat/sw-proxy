@@ -141,10 +141,10 @@ function staleMatch(res, req) {
 
 }
 
-// true if the response satisfies "stale-while-error" requirements, otherwise false
+// true if the response satisfies "stale-if-error" requirements, otherwise false
 function errorMatch(res) {
 
-  // server can whitelist via stale-while-error
+  // server can whitelist via stale-if-error
   function serverMatch() {
     if (!res.headers.has("cache-control")) {
       return false;
@@ -152,8 +152,8 @@ function errorMatch(res) {
 
     var h = parseHeader(res.headers.get("cache-control"));
 
-    if ("stale-while-error" in h) {
-      return (h["stale-while-error"] * 1000) >= age(res);
+    if ("stale-if-error" in h) {
+      return (h["stale-if-error"] * 1000) >= age(res);
     } else {
       return false;
     }
@@ -183,9 +183,66 @@ function cacheNecessary(req) {
 }
 
 /**
+ * @param  {Response} res
+ * @param  {function} headerFn takes mutatable Headers
+ * @return {Promise<Response>}
+ */
+function newResponse(res, headerFn) {
+
+  // res.headers is read-only, sadly...
+  // https://developer.mozilla.org/en-US/docs/Web/API/Response/headers
+  function cloneHeaders() {
+    var headers = new Headers();
+    for (var kv of res.headers.entries()) {
+      headers.append(kv[0], kv[1]);
+    }
+    return headers;
+  }
+
+  var headers = headerFn ? headerFn(cloneHeaders()) : res.headers;
+
+  return new Promise(function (resolve) {
+    return res.blob().then(function (blob) {
+      resolve(new Response(blob, {
+        status: res.status,
+        statusText: res.statusText,
+        headers: headers
+      }));
+    });
+  });
+
+}
+
+/**
+ * @param  {Request} req
+ * @param  {function} headerFn
+ * @return {Promise<Request>}
+ */
+function newRequest(req, headerFn) {
+
+  // req.headers is read-only, sadly...
+  // https://developer.mozilla.org/en-US/docs/Web/API/Request/headers
+  function cloneHeaders() {
+    var headers = new Headers();
+    for (var kv of req.headers.entries()) {
+      headers.append(kv[0], kv[1]);
+    }
+    return headers;
+  }
+
+  var headers = headerFn ? headerFn(cloneHeaders()) : req.headers;
+
+  // returns (unnecessary) promise to parallel newResponse()
+  return Promise.resolve(new Request(req, {
+    headers: headers
+  }));
+
+}
+
+/**
  * @param {string} cache name
- * @param {function} reqFn transforms request headers
- * @param {function} resFn transforms response headers
+ * @param {function} reqFn transforms request (function (res) { ... })
+ * @param {function} resFn transforms response (function (req, res) { ... })
  */
 function Proxy(cache, reqFn, resFn) {
   this.cache = cache;
@@ -196,7 +253,7 @@ function Proxy(cache, reqFn, resFn) {
 Proxy.prototype.add = function (req) {
 
   var cache = this.cache;
-  var resFn = this.resFn ? newResponse.bind(null, this.resFn) : function (obj) { return obj; }
+  var resFn = this.resFn ? this.resFn.bind(null, req) : function (obj) { return obj; }
 
   return fetch(req).then(resFn).then(function (res) {
 
@@ -210,9 +267,9 @@ Proxy.prototype.add = function (req) {
       if (!res.headers.has("date")) {
         console.warn(req.url, "MISSING DATE HEADER");
       }
-      caches.open(cache).then(function (c) {
+      caches.open(cache).then(function (cache) {
         console.log(req.url, "ADDING TO CACHE");
-        c.put(req, res.clone());
+        cache.put(req, res.clone());
       });
     }
 
@@ -225,65 +282,68 @@ Proxy.prototype.add = function (req) {
 Proxy.prototype.fetch = function (req) {
 
   var add = this.add.bind(this);
+  var cache = this.cache;
 
-  if (this.reqFn) { // TODO convert to promise
-    req = this.reqFn(req);
-  }
+  var reqFn = this.reqFn ? this.reqFn : function (obj) { return obj; }
 
-  if (!cacheSufficient(req)) {
-    return add(req);
-  }
+  return Promise.resolve(req).then(reqFn).then(function (req) {
 
-  return caches.open(this.cache).then(function (c) {
-    return c.match(req).then(function (res) {
-      if (res) {
-        if (freshMatch(res, req)) {
-          console.log(req.url, "CACHE (FRESH)");
-          return res;
-        } else if (staleMatch(res, req)) {
-          console.log(req.url, "CACHE (STALE)");
-          add(req);
-          return res;
-        } else {
-          return add(req)
-            .then(function (r) {
-              if (r.status < 500) {
-                console.log(req.url, "NETWORK (CACHED, BUT INVALID)");
-                return r;
-              } else {
+    if (!cacheSufficient(req)) {
+      return add(req);
+    }
+
+    return caches.open(cache).then(function (cache) {
+      return cache.match(req).then(function (res) {
+        if (res) {
+          if (freshMatch(res, req)) {
+            console.log(req.url, "CACHE (FRESH)");
+            return res;
+          } else if (staleMatch(res, req)) {
+            console.log(req.url, "CACHE (STALE, REVALIDATING)");
+            add(req);
+            return res;
+          } else {
+            return add(req)
+              .then(function (r) {
+                if (r.status < 500) {
+                  console.log(req.url, "NETWORK (CACHED, BUT INVALID)");
+                  return r;
+                } else {
+                  if (errorMatch(res, req)) {
+                    console.log(req.url, "CACHE (INVALID, BUT ALLOWED ON NETWORK ERROR)");
+                    return res;
+                  } else {
+                    console.log(req.url, "PROXY ERROR (CACHE NOT ALLOWED)");
+                    return r;
+                  }
+                }
+              })
+              .catch(function (r) {
+                // TODO Handle authentication errors
                 if (errorMatch(res, req)) {
-                  console.log(req.url, "CACHE (INVALID, BUT ALLOWED ON NETWORK ERROR)");
+                  console.log(req.url, "CACHE (INVALID, BUT NETWORK ERROR)");
                   return res;
                 } else {
-                  console.log(req.url, "PROXY ERROR (CACHE NOT ALLOWED)");
-                  return r;
+                  console.log(req.url, "REJECTING (INVALID, AND NETWORK ERROR)");
+                  return Promise.reject(r);
                 }
-              }
-            })
-            .catch(function (r) {
-              // TODO Handle authentication errors
-              if (errorMatch(res, req)) {
-                console.log(req.url, "CACHE (INVALID, BUT NETWORK ERROR)");
-                return res;
-              } else {
-                console.log(req.url, "REJECTING (INVALID, AND NETWORK ERROR)");
-                return Promise.reject(r);
-              }
-            });
-        }
-      } else {
-        if (cacheNecessary(req)) {
-          console.log(req.url, "504 (NOT CACHED, AND CACHE NECESSARY)");
-          return new Response("NOT CACHED", {
-            status: 504,
-            statusText: "Resource not cached"
-          });
+              });
+          }
         } else {
-          console.log(req.url, "NETWORK (NOT CACHED)");
-          return add(req);
+          if (cacheNecessary(req)) {
+            console.log(req.url, "504 (NOT CACHED, AND CACHE NECESSARY)");
+            return new Response("NOT CACHED", {
+              status: 504,
+              statusText: "Resource not cached"
+            });
+          } else {
+            console.log(req.url, "NETWORK (NOT CACHED)");
+            return add(req);
+          }
         }
-      }
+      });
     });
+
   });
 
 }
@@ -319,37 +379,6 @@ function deleteAllCaches() {
   });
 }
 
-function newResponse(resFn, res) {
-
-  function cloneHeaders() {
-    var headers = new Headers();
-    for (var kv of res.headers.entries()) {
-      headers.append(kv[0], kv[1]);
-    }
-    return headers;
-  }
-
-  var headers = resFn ? resFn(cloneHeaders()) : res.headers;
-
-  return new Promise(function (resolve) {
-    return res.blob().then(function (blob) {
-      resolve(new Response(blob, {
-        status: res.status,
-        statusText: res.statusText,
-        headers: headers
-      }));
-    });
-  });
-
-}
-
-function newRequest(reqFn, req) {
-  var headers = reqFn ? reqFn(req.headers) : req.headers;
-  return Promise.resolve(new Request(req, {
-    headers: headers
-  }));
-}
-
 self.addEventListener('install', function (event) {
   event.waitUntil(
     Promise.resolve()
@@ -370,12 +399,35 @@ self.addEventListener('activate', function (event) {
 });
 
 self.addEventListener('fetch', function (event) {
+
   console.log(event.request.url, 'FETCH');
-  var proxy = new Proxy('MYCACHE', null, function (headers) {
-    headers.set("cache-control", "max-age=86000");
-    headers.set("qqqqqq", 6);
-    headers.set("date", new Date().toUTCString());
-    return headers;
-  });
+
+  // Doesn't seem possible to modify the request
+  // http://stackoverflow.com/q/35420980/11543
+  function reqFn(req) {
+    return newRequest(req, function (headers) {
+      headers.set("pppppp", "qqq");
+      return headers;
+    });
+  }
+
+  function resFn(req, res) {
+    if (req.url.match("jpg$")) {
+      console.log(req.url, "JPG, TRANSFORMING");
+      return newResponse(res, function (headers) {
+        console.log("TRANSFORM URL", req.url);
+        headers.set("cache-control", "max-age=86000");
+        headers.set("qqqqqq", 6);
+        headers.set("date", new Date().toUTCString());
+        return headers;
+      });
+    } else {
+      console.log(req.url, "NOT JPG, LEAVING");
+      return res;
+    }
+  }
+
+  var proxy = new Proxy('MYCACHE', null, resFn);
   event.respondWith(proxy.fetch(event.request));
+
 });

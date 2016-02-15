@@ -10,21 +10,11 @@
         console.log('ServiceWorker could not be registered: ', e);
       });
     }
-    setTimeout(function () {
-      fetch("/road.jpg?a").then(function (r) {
-        console.log("CACHE-CONTROL", r.headers.get("cache-control"));
-      });
-    }, 3000);
   </script>
 </head>
 
 <body>
-  <h1><a href="/?next">service-worker</a></h1>
-  <img id="foo">
-  <script>
-  // document.getElementById("foo").src = "road.jpg";
-  </script>
-  <img src="/road.jpg?b">
+  <h1><a href="/two.html">next</a></h1>
 </body>
 
 </html>
