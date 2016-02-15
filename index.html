@@ -11,21 +11,8 @@
       });
     }
     setTimeout(function () {
-      console.log("hihihi");
-      // document.getElementById("foo").src = "chinese.png";
-      // fetch("/bar.txt", {
-      //   headers: {
-      //     "cache-control": "only-if-cached"
-      //   }
-      // }).then(function (r) {
-      //   console.log(r);
-      // });
-      fetch("/foo.txt", {
-        headers: {
-          // "cache-control": "no-cache"
-        }
-      }).then(function (r) {
-        console.log(r);
+      fetch("/road.jpg?a").then(function (r) {
+        console.log("CACHE-CONTROL", r.headers.get("cache-control"));
       });
     }, 3000);
   </script>
@@ -34,6 +21,10 @@
 <body>
   <h1><a href="/?next">service-worker</a></h1>
   <img id="foo">
+  <script>
+  // document.getElementById("foo").src = "road.jpg";
+  </script>
+  <img src="/road.jpg?b">
 </body>
 
 </html>
