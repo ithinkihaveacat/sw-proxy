@@ -14,18 +14,14 @@ var now = function () {
   return new Date().getTime();
 }
 
-// Returns a closure that, when called, returns the number of seconds
-// since the timer() function was itself called.
-function timer(digits) {
-  var t0 = new Date().getTime();
+// Takes a HTTP header (`MAX-AGE=600, stale-while-revalidate=30, public`) and
+// returns the equivalent object
+// (`{"max-age":"600","public":undefined,"stale-while-revalidate":"30"}`).
 
-  return function () {
-    var t1 = new Date().getTime();
-    // linter doesn't like new Number(...)
-    return Number.prototype.toFixed.call((t1 - t0) / 1000, digits || 3);
-  };
-}
-
+/**
+ * @param  {string} header HTTP header
+ * @return {object}
+ */
 function parseHeader(header) {
   return !header.trim() ? {} : header.trim().split(/\s*,\s*/).sort().reduce(function (p, c) {
     var t = c.split(/\s*=\s*/, 2);
@@ -34,7 +30,7 @@ function parseHeader(header) {
   }, {});
 }
 
-// returns number of milliseconds since the resource was cached
+// Returns the number of milliseconds since the Resource was cached.
 function age(res) {
   if (!res.headers.has("date")) {
     console.warn("NO DATE");
@@ -43,7 +39,8 @@ function age(res) {
   return now() - Date.parse(res.headers.get("date"));
 }
 
-// returns number of milliseconds (possibly negative) until resource expires
+// Returns number of milliseconds until the resource expires. If the expiration
+// time is in the past, this number is negative.
 function expires(res) {
 
   if (res.headers.has("cache-control")) {
@@ -58,10 +55,11 @@ function expires(res) {
   return 0;
 }
 
-// true if the response satisfies freshness requirements, otherwise false
+// Returns **true** if the freshness requirements of the `Request` and
+// `Response` are satisfied, otherwise **false**.
 function freshMatch(res, req) {
 
-  // server must whitelist cached response via s-maxage or max-age
+  // Server must whitelist cached response via `s-maxage` or `max-age` …
   function serverMatch() {
     if (!res.headers.has("cache-control")) {
       return false;
@@ -78,7 +76,7 @@ function freshMatch(res, req) {
     }
   }
 
-  // client can blacklist cached response via max-age or min-fresh
+  // … client can blacklist cached response via `max-age` or `min-fresh`.
   function clientMatch() {
     if (!req.headers.has("cache-control")) {
       return true;
@@ -101,10 +99,11 @@ function freshMatch(res, req) {
 
 }
 
-// true if the response satisfies "staleness" requirements, otherwise false
+// Returns **true** if the "staleness" requirements of the `Request` and
+// `Response` are satisfied, otherwise **false**.
 function staleMatch(res, req) {
 
-  // server must whitelist via stale-while-revalidate
+  // Server must whitelist via [`stale-while-revalidate`](https://tools.ietf.org/html/rfc5861#section-3) …
   function serverMatch() {
     if (!res.headers.has("cache-control")) {
       return false;
@@ -122,7 +121,7 @@ function staleMatch(res, req) {
     }
   }
 
-  // client can blacklist via max-stale
+  // … client can blacklist via [`max-stale`](https://tools.ietf.org/html/rfc7234#section-5.2.1.2).
   function clientMatch() {
     if (!req.headers.has("cache-control")) {
       return true;
@@ -141,10 +140,11 @@ function staleMatch(res, req) {
 
 }
 
-// true if the response satisfies "stale-if-error" requirements, otherwise false
+// Returns **true** if the response satisfies `stale-if-error` requirements,
+// otherwise **false**.
 function errorMatch(res) {
 
-  // server can whitelist via stale-if-error
+  // Server can whitelist via stale-if-error …
   function serverMatch() {
     if (!res.headers.has("cache-control")) {
       return false;
@@ -159,7 +159,7 @@ function errorMatch(res) {
     }
   }
 
-  // client can't override
+  // … client can't override this one.
   function clientMatch() {
     return true;
   }
@@ -168,29 +168,34 @@ function errorMatch(res) {
 
 }
 
-// true if the client will accept a cached response, otherwise false
+// Returns **true** if the client will accept a cached response, otherwise
+// **false**.
 function cacheSufficient(req) {
   return !req.headers.has("cache-control") ||
     (req.headers.get("cache-control").indexOf("no-cache") === -1) ||
     !("no-cache" in parseHeader(req.headers.get("cache-control")));
 }
 
-// true if the client requires a cached response, otherwise false
-// https://tools.ietf.org/html/rfc7234#section-5.2.1.7
+// Returns **true** if the client requires a cached response, otherwise
+// **false**. (See
+// [RFC7234](https://tools.ietf.org/html/rfc7234#section-5.2.1.7).)
 function cacheNecessary(req) {
   return (req.headers.has("cache-control")) &&
     ("only-if-cached" in parseHeader(req.headers.get("cache-control")));
 }
 
+// Takes a `Response` and (optionally) a function for transforming headers
+// (`Headers` → `Headers`). Returns a new `Response`.
+
 /**
  * @param  {Response} res
- * @param  {function} headerFn takes mutatable Headers
+ * @param  {function} headerFn passed mutatable `Headers`
  * @return {Promise<Response>}
  */
 function newResponse(res, headerFn) {
 
-  // res.headers is read-only, sadly...
-  // https://developer.mozilla.org/en-US/docs/Web/API/Response/headers
+  // Need this function because sadly [res.headers is
+  // read-only](https://developer.mozilla.org/en-US/docs/Web/API/Response/headers)…
   function cloneHeaders() {
     var headers = new Headers();
     for (var kv of res.headers.entries()) {
@@ -213,15 +218,18 @@ function newResponse(res, headerFn) {
 
 }
 
+// Takes a `Request` and (optionally) a function for transforming headers
+// (`Headers` → `Headers`). Returns a new `Request`.
+
 /**
  * @param  {Request} req
- * @param  {function} headerFn
+ * @param  {function} headerFn passed mutable `Headers`
  * @return {Promise<Request>}
  */
 function newRequest(req, headerFn) {
 
-  // req.headers is read-only, sadly...
-  // https://developer.mozilla.org/en-US/docs/Web/API/Request/headers
+  // Need this function because sadly [res.headers is
+  // read-only](https://developer.mozilla.org/en-US/docs/Web/API/Response/headers)…
   function cloneHeaders() {
     var headers = new Headers();
     for (var kv of req.headers.entries()) {
@@ -232,7 +240,7 @@ function newRequest(req, headerFn) {
 
   var headers = headerFn ? headerFn(cloneHeaders()) : req.headers;
 
-  // returns (unnecessary) promise to parallel newResponse()
+  // Returns (unnecessary) Promise to parallel `newResponse()`.
   return Promise.resolve(new Request(req, {
     headers: headers
   }));
@@ -241,8 +249,8 @@ function newRequest(req, headerFn) {
 
 /**
  * @param {string} cache name
- * @param {function} reqFn transforms request (function (res) { ... })
- * @param {function} resFn transforms response (function (req, res) { ... })
+ * @param {function} [reqFn] transforms request (Request → Request)
+ * @param {function} [resFn] transforms response ((Request, Response) → Response)
  */
 function Proxy(cache, reqFn, resFn) {
   this.cache = cache;
@@ -250,13 +258,24 @@ function Proxy(cache, reqFn, resFn) {
   this.resFn = resFn;
 }
 
+// Parallels
+// [`Cache.add()`](https://developer.mozilla.org/en-US/docs/Web/API/Cache/add);
+// takes a `Request` and returns a Promise resolving to a `Response`. The
+// `Response` can optionally be transformed by the instance variable `resFn`.
+
+/**
+ * @param {Request} req
+ * @return {Promise<Response>}
+ */
 Proxy.prototype.add = function (req) {
 
   var cache = this.cache;
+  // `resFn` transforms the Response, if provided.
   var resFn = this.resFn ? this.resFn.bind(null, req) : function (obj) { return obj; }
 
   return fetch(req).then(resFn).then(function (res) {
 
+    // Can the Response be cached?
     function canCache() {
       return (res.status === 200) &&
         res.headers.has("cache-control") &&
@@ -284,10 +303,12 @@ Proxy.prototype.fetch = function (req) {
   var add = this.add.bind(this);
   var cache = this.cache;
 
+  // `reqFn` transforms the Request, if provided.
   var reqFn = this.reqFn ? this.reqFn : function (obj) { return obj; }
 
   return Promise.resolve(req).then(reqFn).then(function (req) {
 
+    // Is a cached response acceptable?
     if (!cacheSufficient(req)) {
       return add(req);
     }
@@ -295,31 +316,41 @@ Proxy.prototype.fetch = function (req) {
     return caches.open(cache).then(function (cache) {
       return cache.match(req).then(function (res) {
         if (res) {
+          // We received a Response from the cache …
           if (freshMatch(res, req)) {
+            // … and it satisfied all freshness requirements, ship it.
             console.log(req.url, "CACHE (FRESH)");
             return res;
           } else if (staleMatch(res, req)) {
+            // … and it was stale, but this is okay provided we revalidate.
             console.log(req.url, "CACHE (STALE, REVALIDATING)");
             add(req);
             return res;
           } else {
+            // … but it wasn't any good, so go to the network …
+            /* TODO Delete from cache */
             return add(req)
               .then(function (r) {
                 if (r.status < 500) {
+                  // …… Response from network is good, ship it.
                   console.log(req.url, "NETWORK (CACHED, BUT INVALID)");
                   return r;
                 } else {
                   if (errorMatch(res, req)) {
+                    // …… Got network error, but in this case we're allowed to
+                    // ship the previous response, so do that.
                     console.log(req.url, "CACHE (INVALID, BUT ALLOWED ON NETWORK ERROR)");
                     return res;
                   } else {
+                    // …… Network error, and can't ship the previous Response,
+                    // so return the error.
                     console.log(req.url, "PROXY ERROR (CACHE NOT ALLOWED)");
                     return r;
                   }
                 }
               })
               .catch(function (r) {
-                // TODO Handle authentication errors
+                /* TODO Handle authentication errors */
                 if (errorMatch(res, req)) {
                   console.log(req.url, "CACHE (INVALID, BUT NETWORK ERROR)");
                   return res;
@@ -402,8 +433,7 @@ self.addEventListener('fetch', function (event) {
 
   console.log(event.request.url, 'FETCH');
 
-  // Doesn't seem possible to modify the request
-  // http://stackoverflow.com/q/35420980/11543
+  // [Doesn't seem possible to modify the request](http://stackoverflow.com/q/35420980/11543).
   function reqFn(req) {
     return newRequest(req, function (headers) {
       headers.set("pppppp", "qqq");
