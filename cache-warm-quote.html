@@ -1,0 +1,44 @@
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('cache-warm.js').then(function(r) {
+        console.log('Service Worker registered with scope:', r.scope);
+      }).catch(function(e) {
+        console.log('Service Worker could not be registered:', e);
+      });
+    }
+  </script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://code.getmdl.io/1.1.1/material.indigo-pink.min.css">
+  <script defer src="https://code.getmdl.io/1.1.1/material.min.js"></script>
+</head>
+
+<body>
+
+  <div class="mdl-grid">
+    <div class="mdl-cell mdl-cell--6-col">
+      <div class="mdl-card mdl-shadow--8dp">
+        <div class="mdl-card__title">
+          <h1 class="mdl-card__title-text">Cache Warm</h1>
+        </div>
+        <div class="mdl-card__supporting-text">
+          <p id="quote"></p>
+          <script>
+          fetch("/quote.txt").then(function (res) {
+            res.text().then(function (s) {
+              document.getElementById("quote").innerHTML = s;
+            });
+          });
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+
+</html>

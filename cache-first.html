@@ -3,19 +3,18 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-  <link rel="stylesheet" href="https://code.getmdl.io/1.1.1/material.indigo-pink.min.css">
-  <script defer src="https://code.getmdl.io/1.1.1/material.min.js"></script>
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('index.js').then(function(r) {
+      navigator.serviceWorker.register('cache-first.js').then(function(r) {
         console.log('Service Worker registered with scope:', r.scope);
       }).catch(function(e) {
         console.log('Service Worker could not be registered:', e);
       });
     }
   </script>
-
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://code.getmdl.io/1.1.1/material.indigo-pink.min.css">
+  <script defer src="https://code.getmdl.io/1.1.1/material.min.js"></script>
 </head>
 
 <body>
@@ -27,21 +26,8 @@
           <h1 class="mdl-card__title-text">HTTP Proxy Cookbook</h1>
         </div>
         <div class="mdl-card__supporting-text">
-
-          <p>Some strategies that parallel Service Worker Toolbox's <a href="https://github.com/GoogleChrome/sw-toolbox#built-in-handlers">handlers</a>.</p>
-
           <ul>
             <li><a href="cache-first.html">Cache First</a></li>
-            <li><a href="network-first.html">Network First</a></li>
-            <li><a href="cache-only.html">Cache Only</a></li>
-            <li><a href="network-only.html">Network Only</a></li>
-            <li><a href="fastest.html">Fastest</a></li>
-          </ul>
-
-          <p>Other strategies:</p>
-
-          <ul>
-            <li><a href="cache-warm.html">Cache Warm</a> (pre-cache)</li>
             <li><a href="stale-while-revalidate.html">Stale While Revalidate</a></li>
           </ul>
         </div>
