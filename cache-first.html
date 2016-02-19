@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script>
     if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.ready.then(function () {
+        console.log("Service Worker ready");
+      });
       navigator.serviceWorker.register('cache-first.js').then(function(r) {
         console.log('Service Worker registered with scope:', r.scope);
       }).catch(function(e) {
@@ -23,13 +26,13 @@
     <div class="mdl-cell mdl-cell--6-col">
       <div class="mdl-card mdl-shadow--8dp">
         <div class="mdl-card__title">
-          <h1 class="mdl-card__title-text">HTTP Proxy Cookbook</h1>
+          <h1 class="mdl-card__title-text">Cache First</h1>
         </div>
         <div class="mdl-card__supporting-text">
-          <ul>
-            <li><a href="cache-first.html">Cache First</a></li>
-            <li><a href="stale-while-revalidate.html">Stale While Revalidate</a></li>
-          </ul>
+          <img src="/jpg/00.jpg">
+          <img src="/jpg/01.jpg">
+          <img src="/jpg/02.jpg">
+          <img src="/jpg/03.jpg">
         </div>
       </div>
     </div>

@@ -29,6 +29,22 @@ function getEntries() {
   };
 }
 
-skipWaitingAndClaim(self);
+var entries = getEntries();
 
-strategyPreCacheStatic(self, CACHE, getEntries());
+self.skipWaitingAndClaim(self);
+
+self.addEventListener('install', function (event) {
+  event.waitUntil(
+    caches.open(CACHE).then(function (cache) {
+      return Promise.all(Object.keys(entries).reduce(function (acc, url) {
+        acc.push(cache.put(url, entries[url]));
+        return acc;
+      }, []));
+    })
+  );
+});
+
+self.addEventListener('fetch', function (event) {
+  var proxy = new Proxy(CACHE);
+  event.respondWith(proxy.fetch(event.request));
+});

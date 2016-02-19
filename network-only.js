@@ -10,4 +10,14 @@ var CACHE = "MYCACHE";
 
 skipWaitingAndClaim(self);
 
-strategyNetworkOnly(self, CACHE);
+self.addEventListener('fetch', function (event) {
+  var proxy = new Proxy(CACHE, function (req) {
+    return newRequest(req, function (headers) {
+      headers.set("cache-control", "no-cache");
+      headers.set("x-strategy", "network-only");
+      return headers;
+    });
+  });
+
+  event.respondWith(proxy.fetch(event.request));
+});
