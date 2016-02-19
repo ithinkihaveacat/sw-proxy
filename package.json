@@ -1,0 +1,12 @@
+{
+  "name": "service-worker-http-proxy",
+  "version": "0.0.1",
+  "devDependencies": {
+    "docco": "~0.7",
+    "http-server": "~0.8"
+  },
+  "scripts": {
+    "prestart": "node_modules/.bin/docco *.js",
+    "start": "node_modules/.bin/http-server -p 8000 -c-1"
+  }
+}

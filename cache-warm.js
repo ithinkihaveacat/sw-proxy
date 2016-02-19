@@ -2,16 +2,18 @@
 
 self.importScripts("http-proxy.js");
 
-var VERSION = "v" + new Date().toISOString().substr(11, 8);
+var VERSION = "CACHE-WARM.JS v" + new Date().toISOString().substr(11, 8);
 
-console.log("CACHE-WARM.JS", VERSION);
+console.log(VERSION);
+
+var CACHE = "MYCACHE";
 
 // Injects a `/quote.txt` into the cache.
-function warm(c) {
+function getEntries() {
   var body = [
     "The great roe is a mythological beast with the head",
     "of a lion and the body of a lion, though not the same",
-    "lion. – Woody Allen"
+    "lion. &#8211; Woody Allen"
   ].join(" ");
   var res = new Response(body, {
     status: 200,
@@ -22,44 +24,11 @@ function warm(c) {
       "date": new Date().toUTCString()
     }
   });
-  return c.put(new Request("/quote.txt"), res).then(function () {
-    return c;
-  });
+  return {
+    "/quote.txt": res
+  };
 }
 
-function lookup(c) {
-  return c.match(new Request("/quote.txt")).then(function (r) {
-    console.log(r ? "CACHE HIT" : "CACHE MISS");
-  });
-}
+skipWaitingAndClaim(self);
 
-// ## Event Handlers
-
-// ### "install"
-
-self.addEventListener('install', function (event) {
-  console.log("INSTALLING", VERSION);
-  event.waitUntil(
-    Promise.resolve()
-    .then(warm)
-    .then(lookup)
-  );
-});
-
-// ### "activate"
-
-self.addEventListener('activate', function (event) {
-  console.log("ACTIVATING", VERSION);
-  event.waitUntil(self.clients.claim());
-});
-
-// ### "fetch"
-
-self.addEventListener('fetch', function (event) {
-
-  console.log(event.request.url, 'FETCH');
-
-  var proxy = new Proxy('MYCACHE');
-  event.respondWith(proxy.fetch(event.request));
-
-});
+strategyPreCacheStatic(self, CACHE, getEntries());

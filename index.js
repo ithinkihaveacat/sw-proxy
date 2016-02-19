@@ -2,9 +2,9 @@
 
 self.importScripts("http-proxy.js");
 
-var VERSION = "v" + new Date().toISOString().substr(11, 8);
+var VERSION = "INDEX.JS v" + new Date().toISOString().substr(11, 8);
 
-console.log("INDEX.JS", VERSION);
+console.log(VERSION);
 
 function deleteAllCaches() {
   return caches.keys().then(function (cacheNames) {
@@ -28,9 +28,4 @@ self.addEventListener('install', function (event) {
   event.waitUntil(deleteAllCaches());
 });
 
-// ### "activate"
-
-self.addEventListener('activate', function (event) {
-  console.log("ACTIVATING", VERSION);
-  event.waitUntil(self.clients.claim());
-});
+self.skipWaitingAndClaim(self);

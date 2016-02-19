@@ -5,8 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('cache-warm.js').then(function(r) {
-        console.log('Service Worker registered with scope:', r.scope);
+      navigator.serviceWorker.ready.then(function () {
         var done = document.getElementById("done");
         done.innerHTML = "done!";
         var next = document.getElementById("next");
@@ -14,6 +13,9 @@
         next.addEventListener("click", function () {
           window.location = next.getAttribute("href");
         });
+      });
+      navigator.serviceWorker.register('cache-warm.js').then(function(r) {
+        console.log('Service Worker registered with scope:', r.scope);
       }).catch(function(e) {
         console.log('Service Worker could not be registered:', e);
       });

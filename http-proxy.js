@@ -307,11 +307,15 @@ Proxy.prototype.add = function (req) {
       }
       caches.open(cache).then(function (cache) {
         console.log(req.url, "ADDING TO CACHE");
-        cache.put(req, res.clone());
+        cache.put(req, res.clone()); /* [1] */
       });
     }
 
-    return res;
+    return res.clone(); /* [2] */
+
+    /* We clone() at both [1] and [2] because otherwise (at least I think this
+    /* is what happens), the returned res can be drained by the time we attempt
+    /* the clone() in the caches.open() block, and which point it's too late. */
 
   });
 
@@ -399,6 +403,74 @@ Proxy.prototype.fetch = function (req) {
       });
     });
 
+  });
+
+}
+
+// ## Service Worker Utils
+
+// **skipWaitingAndClaim(scope)**
+//
+// Configures the passed service worker to "skip waiting"--that is, to activate
+// as soon as possible, instead of waiting for the page to be reloaded.
+
+/**
+ * @param  {ServiceWorkerGlobalScope} scope Probably `self`
+ */
+ /* exported skipWaitingAndClaim */
+function skipWaitingAndClaim(scope) {
+  /* http://stackoverflow.com/a/34681584/11543 */
+  scope.addEventListener('install', function (event) {
+    event.waitUntil(scope.skipWaiting());
+  });
+
+  self.addEventListener('activate', function (event) {
+    event.waitUntil(scope.clients.claim());
+  });
+}
+
+// ## Service Worker Strategies
+//
+// **strategyPreCacheStatic(scope, name, entries)**
+/**
+ * @param  {ServiceWorkerGlobalScope} scope Probably `self`
+ * @param  {string} name cache name
+ * @param  {object} entries { url1: Response, url2: Response }
+ */
+ /* exported strategyPreCacheStatic */
+function strategyPreCacheStatic(scope, name, entries) {
+
+  scope.addEventListener('install', function (event) {
+    event.waitUntil(
+      caches.open(name).then(function (cache) {
+        return Promise.all(Object.keys(entries).reduce(function (acc, url) {
+          acc.push(cache.put(url, entries[url]));
+          return acc;
+        }, []));
+      })
+    );
+  });
+
+  scope.addEventListener('fetch', function (event) {
+    var proxy = new Proxy(name);
+    event.respondWith(proxy.fetch(event.request));
+  });
+
+}
+
+/* exported strategyNetworkOnly */
+function strategyNetworkOnly(scope, name) {
+
+  scope.addEventListener('fetch', function (event) {
+    var proxy = new Proxy(name, function (req) {
+      return newRequest(req, function (headers) {
+        headers.set("cache-control", "no-cache");
+        headers.set("x-strategy", "network-only");
+        return headers;
+      });
+    });
+
+    event.respondWith(proxy.fetch(event.request));
   });
 
 }

@@ -5,9 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('cache-warm.js').then(function (r) {
+      navigator.serviceWorker.ready.then(function () {
+        console.log("Service Worker ready");
+      });
+      navigator.serviceWorker.register('network-only.js').then(function(r) {
         console.log('Service Worker registered with scope:', r.scope);
-      }).catch(function (e) {
+      }).catch(function(e) {
         console.log('Service Worker could not be registered:', e);
       });
     }
@@ -23,17 +26,13 @@
     <div class="mdl-cell mdl-cell--6-col">
       <div class="mdl-card mdl-shadow--8dp">
         <div class="mdl-card__title">
-          <h1 class="mdl-card__title-text">Cache Warm</h1>
+          <h1 class="mdl-card__title-text">Network Only</h1>
         </div>
         <div class="mdl-card__supporting-text">
-          <p id="quote"></p>
-          <script>
-          fetch("/quote.txt").then(function (res) {
-            res.text().then(function (s) {
-              document.getElementById("quote").innerHTML = s;
-            });
-          });
-          </script>
+          <img src="/jpg/00.jpg">
+          <img src="/jpg/01.jpg">
+          <img src="/jpg/02.jpg">
+          <img src="/jpg/03.jpg">
         </div>
       </div>
     </div>
