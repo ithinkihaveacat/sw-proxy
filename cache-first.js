@@ -12,13 +12,7 @@ skipWaitingAndClaim(self);
 
 self.addEventListener('fetch', function (event) {
 
-  function reqFn(req) {
-    return newRequest(req, function (headers) {
-      headers.set("cache-control", "qqqq");
-      return headers;
-    });
-  }
-
+  // Function to transform responses
   function resFn(req, res) {
     // Only transform JPGs
     if (req.url.match("jpg$")) {
@@ -33,6 +27,7 @@ self.addEventListener('fetch', function (event) {
     }
   }
 
+  // Configure the proxy
   var proxy = new Proxy(CACHE, null, resFn);
 
   event.respondWith(proxy.fetch(event.request));

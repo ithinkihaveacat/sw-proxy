@@ -314,8 +314,9 @@ Proxy.prototype.add = function (req) {
     return res.clone(); /* [2] */
 
     /* We clone() at both [1] and [2] because otherwise (at least I think this
-    /* is what happens), the returned res can be drained by the time we attempt
-    /* the clone() in the caches.open() block, and which point it's too late. */
+    /* is what happens), the res returned at [2] can get drained by the caller
+    /* before we attempt the clone() at [1], at which point it's too late.
+    /* (Always Be Cloning, basically.) */
 
   });
 
@@ -424,7 +425,7 @@ function skipWaitingAndClaim(scope) {
     event.waitUntil(scope.skipWaiting());
   });
 
-  self.addEventListener('activate', function (event) {
+  scope.addEventListener('activate', function (event) {
     event.waitUntil(scope.clients.claim());
   });
 }

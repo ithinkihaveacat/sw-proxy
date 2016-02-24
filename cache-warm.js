@@ -8,7 +8,7 @@ console.log(VERSION);
 
 var CACHE = "MYCACHE";
 
-// Injects a `/quote.txt` into the cache.
+// The response for `/quote.txt`.
 function getEntries() {
   var body = [
     "The great roe is a mythological beast with the head",
@@ -29,11 +29,11 @@ function getEntries() {
   };
 }
 
-var entries = getEntries();
-
 self.skipWaitingAndClaim(self);
 
+// On "install", inject responses into cache.
 self.addEventListener('install', function (event) {
+  var entries = getEntries();
   event.waitUntil(
     caches.open(CACHE).then(function (cache) {
       return Promise.all(Object.keys(entries).reduce(function (acc, url) {
