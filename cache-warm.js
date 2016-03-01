@@ -45,6 +45,6 @@ self.addEventListener('install', function (event) {
 });
 
 self.addEventListener('fetch', function (event) {
-  var proxy = new Proxy(CACHE);
+  var proxy = new HttpProxy(CACHE);
   event.respondWith(proxy.fetch(event.request));
 });

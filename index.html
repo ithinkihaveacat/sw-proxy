@@ -6,19 +6,9 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="https://code.getmdl.io/1.1.1/material.indigo-pink.min.css">
   <script defer src="https://code.getmdl.io/1.1.1/material.min.js"></script>
+  <script src="register-ready.js"></script>
   <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.ready.then(function (r) {
-        foo = r;
-        console.log("READY RESOLVED, STATE", r.active.state);
-      });
-      navigator.serviceWorker.register('index.js').then(function(r) {
-        // console.log("REGISTER RESOLVED, STATE", r.active.state);
-        console.log('Service Worker registered with scope:', r.scope);
-      }).catch(function(e) {
-        console.log('Service Worker could not be registered:', e);
-      });
-    }
+  registerReady("index.js");
   </script>
 
 </head>
@@ -33,7 +23,7 @@
         </div>
         <div class="mdl-card__supporting-text">
 
-          <p>Some strategies that parallel Service Worker Toolbox's <a href="https://github.com/GoogleChrome/sw-toolbox#built-in-handlers">handlers</a>.</p>
+          <p>Some strategies that parallel the <a href="https://github.com/GoogleChrome/sw-toolbox#built-in-handlers">Service Worker Toolbox handlers</a>.</p>
 
           <ul>
             <li><a href="cache-first.html">Cache First</a> (<a href="/docs/cache-first.html">source</a>)</li>

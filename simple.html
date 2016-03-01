@@ -6,6 +6,7 @@
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.ready.then(function (r) {
+        fetch("/" + r.active.state);
         console.log("READY RESOLVED, STATE", r.active.state);
       });
       navigator.serviceWorker.register('simple.js').then(function(r) {

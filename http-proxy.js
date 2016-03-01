@@ -256,23 +256,23 @@ function newRequest(req, headerFn) {
 
 }
 
-// ## Proxy
+// ## HttpProxy
 //
 // Implements a [RFC 7234](https://tools.ietf.org/html/rfc7234) HTTP cache.
-// (Well, that's the idea anyway. There's probably a large number of bugs.)
+// (Well, that's the idea anyway. There's probably quite a few bugs.)
 
 /**
  * @param {string} cache name
  * @param {function} [reqFn] transforms request (Request → Request)
  * @param {function} [resFn] transforms response ((Request, Response) → Response)
  */
-function Proxy(cache, reqFn, resFn) {
+function HttpProxy(cache, reqFn, resFn) {
   this.cache = cache;
   this.reqFn = reqFn;
   this.resFn = resFn;
 }
 
-// ### Proxy.add()
+// ### HttpProxy.add()
 //
 // Parallels
 // [`Cache.add()`](https://developer.mozilla.org/en-US/docs/Web/API/Cache/add);
@@ -283,7 +283,7 @@ function Proxy(cache, reqFn, resFn) {
  * @param {Request} req
  * @return {Promise<Response>}
  */
-Proxy.prototype.add = function (req) {
+HttpProxy.prototype.add = function (req) {
 
   var cache = this.cache;
   // `resFn` transforms the `Response`, if provided.
@@ -322,13 +322,13 @@ Proxy.prototype.add = function (req) {
 
 }
 
-// ### Proxy.fetch()
+// ### HttpProxy.fetch()
 
 /**
  * @param  {Request} req [description]
  * @return {[type]}     [description]
  */
-Proxy.prototype.fetch = function (req) {
+HttpProxy.prototype.fetch = function (req) {
 
   function sameOrigin() {
     var origin = self.location.protocol + "//" + self.location.host;
@@ -418,7 +418,7 @@ Proxy.prototype.fetch = function (req) {
 /**
  * @param  {ServiceWorkerGlobalScope} scope Probably `self`
  */
- /* exported skipWaitingAndClaim */
+/* exported skipWaitingAndClaim */
 function skipWaitingAndClaim(scope) {
   /* http://stackoverflow.com/a/34681584/11543 */
   scope.addEventListener('install', function (event) {

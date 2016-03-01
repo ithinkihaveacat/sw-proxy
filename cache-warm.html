@@ -3,24 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.ready.then(function () {
-        var done = document.getElementById("done");
-        done.innerHTML = "done!";
-        var next = document.getElementById("next");
-        next.disabled = false;
-        next.addEventListener("click", function () {
-          window.location = next.getAttribute("href");
-        });
-      });
-      navigator.serviceWorker.register('cache-warm.js').then(function(r) {
-        console.log('Service Worker registered with scope:', r.scope);
-      }).catch(function(e) {
-        console.log('Service Worker could not be registered:', e);
-      });
-    }
-  </script>
+  <script src="register-ready.js"></script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="https://code.getmdl.io/1.1.1/material.indigo-pink.min.css">
   <script defer src="https://code.getmdl.io/1.1.1/material.min.js"></script>
@@ -35,10 +18,17 @@
           <h1 class="mdl-card__title-text">Cache Warm</h1>
         </div>
         <div class="mdl-card__supporting-text">
-          <p>Registering Service Worker … <span id="done"></span></p>
-          <button disabled id="next" href="cache-warm-quote.html" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
-            Next
-          </button>
+          <p id="quote"></p>
+          <script>
+          registerReady("cache-warm.js").then(function (r) {
+            console.log("SW ACTIVE");
+            fetch("/quote.txt").then(function (res) {
+              res.text().then(function (s) {
+                document.getElementById("quote").innerHTML = s;
+              });
+            });
+          });
+          </script>
         </div>
       </div>
     </div>

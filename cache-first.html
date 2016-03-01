@@ -3,17 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="register-ready.js"></script>
   <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.ready.then(function () {
-        console.log("Service Worker ready");
-      });
-      navigator.serviceWorker.register('cache-first.js').then(function(r) {
-        console.log('Service Worker registered with scope:', r.scope);
-      }).catch(function(e) {
-        console.log('Service Worker could not be registered:', e);
-      });
-    }
+    registerReady('cache-first.js').then(function (r) {
+      document.getElementById("img00").src = "/jpg/00.jpg";
+      document.getElementById("img01").src = "/jpg/01.jpg";
+      document.getElementById("img02").src = "/jpg/02.jpg";
+      document.getElementById("img03").src = "/jpg/03.jpg";
+    });
   </script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="https://code.getmdl.io/1.1.1/material.indigo-pink.min.css">
@@ -29,10 +26,10 @@
           <h1 class="mdl-card__title-text">Cache First</h1>
         </div>
         <div class="mdl-card__supporting-text">
-          <img src="/jpg/00.jpg">
-          <img src="/jpg/01.jpg">
-          <img src="/jpg/02.jpg">
-          <img src="/jpg/03.jpg">
+          <img id="img00">
+          <img id="img01">
+          <img id="img02">
+          <img id="img03">
         </div>
       </div>
     </div>

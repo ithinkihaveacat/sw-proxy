@@ -1,5 +1,7 @@
 /* eslint-env serviceworker, browser */
 
+/*
+
 self.addEventListener('install', function (event) {
   console.log('INSTALL A');
   event.waitUntil(new Promise(function (resolve) {
@@ -24,3 +26,5 @@ self.addEventListener('install', function (event) {
 self.addEventListener('activate', function () {
   console.log('ACTIVATE'); // never reached
 });
+
+*/
