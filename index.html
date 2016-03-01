@@ -19,26 +19,41 @@
     <div class="mdl-cell mdl-cell--6-col">
       <div class="mdl-card mdl-shadow--8dp">
         <div class="mdl-card__title">
-          <h1 class="mdl-card__title-text">HTTP Proxy Cookbook</h1>
+          <h1 class="mdl-card__title-text">HTTP Proxy Service Worker</h1>
         </div>
         <div class="mdl-card__supporting-text">
 
-          <p>Some strategies that parallel the <a href="https://github.com/GoogleChrome/sw-toolbox#built-in-handlers">Service Worker Toolbox handlers</a>.</p>
+          <p><tt><a href="/docs/http-proxy.html">http-proxy.js</a></tt>
+          implements an <a href="https://tools.ietf.org/html/rfc7234">RFC
+          7234</a> and <a href="https://tools.ietf.org/html/rfc5861">RFC
+          5861</a> compliant HTTP proxy suitable for use within a service
+          worker.</p>
+
+          <p>Since HTTP has very sophisticated cache-handling features, this
+          makes it possible to implement different caching strategies via
+          minimal wrappers around <tt>http-proxy.js</tt>. Some examples are
+          below.</p>
+
+          <p>Some strategies that parallel the <a
+          href="https://github.com/GoogleChrome/sw-toolbox#built-in-handlers">Service
+          Worker Toolbox handlers</a>.</p>
 
           <ul>
-            <li><a href="cache-first.html">Cache First</a> (<a href="/docs/cache-first.html">source</a>)</li>
-            <li><a href="network-first.html">Network First</a></li>
-            <li><a href="cache-only.html">Cache Only</a></li>
-            <li><a href="network-only.html">Network Only</a></li>
-            <li><a href="fastest.html">Fastest</a></li>
+            <li><a href="activate.html#name=cache-first">Cache First</a> (<a href="/docs/cache-first.html">source</a>)</li>
+            <li>Network First</li>
+            <li>Cache Only</li>
+            <li><a href="activate.html#name=network-only">Network Only</a> (<a href="/docs/network-only.html">source</a>)</li>
+            <li>Fastest</li>
           </ul>
 
           <p>Other strategies:</p>
 
           <ul>
-            <li><a href="cache-warm.html">Cache Warm</a> (<a href="/docs/cache-warm.html">source</a>)</li>
-            <li><a href="stale-while-revalidate.html">Stale While Revalidate</a></li>
+            <li><a href="activate.html#name=cache-synthetic">Cache Synthetic</a> (<a href="/docs/cache-synthetic.html">source</a>)</li>
+            <li><a href="activate.html#name=pre-cache">Pre-cache</a> (<a href="/docs/pre-cache.html">source</a>)</li>
+            <li><a href="activate.html#name=stale-while-revalidate">Stale While Revalidate</a> (<a href="/docs/stale-while-revalidate.html">source</a>)</li>
           </ul>
+
         </div>
       </div>
     </div>

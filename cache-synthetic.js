@@ -13,7 +13,7 @@ function getEntries() {
   var body = [
     "The great roe is a mythological beast with the head",
     "of a lion and the body of a lion, though not the same",
-    "lion. &#8211; Woody Allen"
+    "lion."
   ].join(" ");
   var res = new Response(body, {
     status: 200,

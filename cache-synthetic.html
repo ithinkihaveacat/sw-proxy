@@ -4,6 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="register-ready.js"></script>
+  <script>
+  registerReady("cache-synthetic.js").then(function () {
+    console.log("ACTIVE");
+  });
+  </script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="https://code.getmdl.io/1.1.1/material.indigo-pink.min.css">
   <script defer src="https://code.getmdl.io/1.1.1/material.min.js"></script>
@@ -18,14 +23,15 @@
           <h1 class="mdl-card__title-text">Cache Warm</h1>
         </div>
         <div class="mdl-card__supporting-text">
-          <p id="quote"></p>
+
+          <p>Injects an artificial <tt>/quote.txt</tt> into the cache, which is
+          displayed below.</p>
+
+          <blockquote id="quote"></blockquote>
           <script>
-          registerReady("cache-warm.js").then(function (r) {
-            console.log("SW ACTIVE");
-            fetch("/quote.txt").then(function (res) {
-              res.text().then(function (s) {
-                document.getElementById("quote").innerHTML = s;
-              });
+          fetch("/quote.txt").then(function (res) {
+            res.text().then(function (s) {
+              document.getElementById("quote").innerHTML = s;
             });
           });
           </script>

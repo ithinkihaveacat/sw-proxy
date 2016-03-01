@@ -6,10 +6,7 @@
   <script src="register-ready.js"></script>
   <script>
     registerReady('cache-first.js').then(function (r) {
-      document.getElementById("img00").src = "/jpg/00.jpg";
-      document.getElementById("img01").src = "/jpg/01.jpg";
-      document.getElementById("img02").src = "/jpg/02.jpg";
-      document.getElementById("img03").src = "/jpg/03.jpg";
+      console.log("ACTIVE");
     });
   </script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
@@ -26,10 +23,14 @@
           <h1 class="mdl-card__title-text">Cache First</h1>
         </div>
         <div class="mdl-card__supporting-text">
-          <img id="img00">
-          <img id="img01">
-          <img id="img02">
-          <img id="img03">
+
+          <p>This strategy modifies the cache control headers of the images so
+          that they are cached for 1 week.</p>
+
+          <img id="img00" src="/jpg/00.jpg">
+          <img id="img01" src="/jpg/01.jpg">
+          <img id="img02" src="/jpg/02.jpg">
+          <img id="img03" src="/jpg/03.jpg">
         </div>
       </div>
     </div>

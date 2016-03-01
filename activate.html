@@ -1,0 +1,62 @@
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="register-ready.js"></script>
+  <script>
+  function getParams() {
+    var params = {};
+    var parts = window.location.hash.substr(1).split("&");
+    for (var i = 0; i < parts.length; i++) {
+      var p = parts[i];
+      var matches = p.match(/(.*)=(.*)/);
+      if (matches) {
+        var k = matches[1];
+        var v = matches[2];
+        params[k] = v;
+      }
+    }
+    return params;
+  }
+  </script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://code.getmdl.io/1.1.1/material.indigo-pink.min.css">
+  <script defer src="https://code.getmdl.io/1.1.1/material.min.js"></script>
+</head>
+
+<body>
+
+  <div class="mdl-grid">
+    <div class="mdl-cell mdl-cell--6-col">
+      <div class="mdl-card mdl-shadow--8dp">
+        <div class="mdl-card__title">
+          <h1 class="mdl-card__title-text">Activating …&nbsp;<span id="done"></span></h1>
+        </div>
+        <div class="mdl-card__supporting-text">
+          <p>
+            <button disabled id="next" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+              Next
+            </button>
+          </p>
+          <script>
+          var params = getParams();
+          if (params.name) {
+            registerReady(params.name + ".js").then(function () {
+              console.log("ACTIVE", params.name + ".js");
+              document.getElementById("done").innerHTML = "done!";
+              document.getElementById("next").onclick = function () {
+                window.location = params.name + ".html";
+              };
+              document.getElementById("next").disabled = false;
+            });
+          }
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+
+</html>

@@ -3,18 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="register-ready.js"></script>
   <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.ready.then(function (r) {
-        fetch("/" + r.active.state);
-        console.log("READY RESOLVED, STATE", r.active.state);
-      });
-      navigator.serviceWorker.register('simple.js').then(function(r) {
-        console.log('simple.js registered with scope:', r.scope);
-      }).catch(function(e) {
-        console.log('simple.js could not be registered:', e);
-      });
-    }
+    registerReady('pre-cache.js').then(function (r) {
+      console.log("ACTIVE");
+    });
   </script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="https://code.getmdl.io/1.1.1/material.indigo-pink.min.css">
@@ -27,7 +20,17 @@
     <div class="mdl-cell mdl-cell--6-col">
       <div class="mdl-card mdl-shadow--8dp">
         <div class="mdl-card__title">
-          <h1 class="mdl-card__title-text">Simple Service Worker</h1>
+          <h1 class="mdl-card__title-text">Pre Cache</h1>
+        </div>
+        <div class="mdl-card__supporting-text">
+
+          <p>This strategy fetches the images in the service worker, and caches
+          them for 1 week.</p>
+
+          <img id="img00" src="/jpg/00.jpg">
+          <img id="img01" src="/jpg/01.jpg">
+          <img id="img02" src="/jpg/02.jpg">
+          <img id="img03" src="/jpg/03.jpg">
         </div>
       </div>
     </div>

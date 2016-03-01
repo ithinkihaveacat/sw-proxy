@@ -1,5 +1,11 @@
 /* eslint-env serviceworker, browser */
 
+// ## TODO
+//
+// * Tests.
+// * Cache expiration (am assuming the browser will behave "sensibly"
+//   here--it may not be necessary to do anything.
+
 var VERSION = "v" + new Date().toISOString().substr(11, 8);
 
 console.log("HTTP-PROXY.JS", VERSION);
@@ -258,14 +264,15 @@ function newRequest(req, headerFn) {
 
 // ## HttpProxy
 //
-// Implements a [RFC 7234](https://tools.ietf.org/html/rfc7234) HTTP cache.
-// (Well, that's the idea anyway. There's probably quite a few bugs.)
+// Implements a [RFC 7234](https://tools.ietf.org/html/rfc7234)-compliant HTTP
+// cache. (Well, that's the idea anyway. There's probably quite a few bugs.)
 
 /**
  * @param {string} cache name
  * @param {function} [reqFn] transforms request (Request → Request)
  * @param {function} [resFn] transforms response ((Request, Response) → Response)
  */
+/* exported HttpProxy */
 function HttpProxy(cache, reqFn, resFn) {
   this.cache = cache;
   this.reqFn = reqFn;
@@ -329,6 +336,10 @@ HttpProxy.prototype.add = function (req) {
  * @return {[type]}     [description]
  */
 HttpProxy.prototype.fetch = function (req) {
+
+  if (typeof req === "string") {
+    req = new Request(req);
+  }
 
   function sameOrigin() {
     var origin = self.location.protocol + "//" + self.location.host;

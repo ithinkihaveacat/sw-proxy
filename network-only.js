@@ -8,16 +8,22 @@ console.log(VERSION);
 
 var CACHE = "MYCACHE";
 
-skipWaitingAndClaim(self);
+self.skipWaitingAndClaim(self);
 
 self.addEventListener('fetch', function (event) {
-  var proxy = new Proxy(CACHE, function (req) {
+
+  // Function to transform requests
+  function reqFn(req) {
     return newRequest(req, function (headers) {
+      // Don't use the cache, ever
       headers.set("cache-control", "no-cache");
       headers.set("x-strategy", "network-only");
       return headers;
     });
-  });
+  }
+
+  var proxy = new HttpProxy(CACHE, reqFn);
 
   event.respondWith(proxy.fetch(event.request));
+
 });
