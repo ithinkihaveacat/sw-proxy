@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "devDependencies": {
     "docco": "~0.7",
-    "http-server": "~0.8"
+    "http-server": "~0.9"
   },
   "scripts": {
     "prestart": "node_modules/.bin/docco *.js",
