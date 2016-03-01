@@ -14,18 +14,6 @@ self.addEventListener('fetch', function (event) {
 
   console.log("FETCH EVENT", event.request.url);
 
-  function reqFn(req) {
-    if (req.url.match("jpg$")) {
-      return newRequest(req, function (headers) {
-        // Shift-reload sends cache-control: no-cache.
-        headers.delete("cache-control");
-        return headers;
-      });
-    } else {
-      return req;
-    }
-  }
-
   // Function to transform responses
   function resFn(req, res) {
     // Only transform JPGs
@@ -42,7 +30,7 @@ self.addEventListener('fetch', function (event) {
   }
 
   // Configure the proxy
-  var proxy = new HttpProxy(CACHE, reqFn, resFn);
+  var proxy = new HttpProxy(CACHE, null, resFn);
 
   event.respondWith(proxy.fetch(event.request));
 });
