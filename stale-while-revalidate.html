@@ -24,14 +24,28 @@
         </div>
         <div class="mdl-card__supporting-text">
 
-          <p>The proxy transforms the following images so that they get a
-          <tt>cache-control</tt> header of <tt>max-age=10,
+          <p>This strategy transforms the headers of the following images so
+          that they get a <tt>cache-control</tt> header of <tt>max-age=10,
           stale-while-revalidate=50</tt>.</p>
 
-          <p>The cache will be used until the images are 10 seconds old. Between
-          10 seconds and 60 seconds, the cache can be used, but the service
-          worker will revalidated (i.e. re-fetch) the images in the background.
-          After the images are 60 seconds old, the cache is not used.</p>
+          <p>This has the behavior:
+
+            <ul>
+
+              <li><strong>image was retrieved less than 10 seconds ago</strong> -
+              cached image is returned</li>
+
+              <li><strong>image was retrieved between 10 and 60 seconds
+              ago</strong> - cached image is returned immediately, but service
+              worker retrieves a fresh copy of the image in the background and
+              uses it to refresh the cache</li>
+
+              <li><strong>image was retrieved more than 60 seconds ago, or not
+              in cache</strong> - image is retrieved from network</li>
+
+            </ul>
+
+          </p>
 
           <img id="img00" src="/jpg/00.jpg">
           <img id="img01" src="/jpg/01.jpg">

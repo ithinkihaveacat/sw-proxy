@@ -36,7 +36,7 @@ function getProxy() {
 self.addEventListener('install', function (event) {
 
   // We're not handling the "fetch" event yet, so we need to pass requests
-  // through the proxy "manually" (rather than just doing a `fetch()`, and
+  // through the proxy "manually" (rather than just doing a `fetch()`), and
   // having that fire the `fetch` event.
   var proxy = getProxy();
 

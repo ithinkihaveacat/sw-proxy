@@ -1,6 +1,6 @@
 # HTTP Proxy Proof-of-Concept
 
-## Introduction
+## Motivation
 
 Perhaps surprisingly, the service worker cache [does not behave like a standard
 HTTP cache](http://stackoverflow.com/a/35152817/11543);
@@ -9,10 +9,12 @@ HTTP cache](http://stackoverflow.com/a/35152817/11543);
 5861](https://tools.ietf.org/html/rfc5861) compliant HTTP proxy suitable for use
 within a service worker.
 
-The hope behind this was that since HTTP has very sophisticated cache management
-features, it might be possible to implement different caching strategies via
-simple wrappers that merely manipulate the well-defined and well-understood HTTP
-cache control headers.
+Some reasons for investigating this:
+
+* **To polyfill HTTP features browsers don't support.** Browsers support some, but not all, of the standard cache control headers. For example, no browser implements [`stale-while-revalidate`](https://tools.ietf.org/html/rfc5861#section-3) or [`stale-if-error`](https://tools.ietf.org/html/rfc5861#section-4) (though `stale-while-revalidate` may arrive in [Chrome M49](https://www.chromestatus.com/feature/5050913014153216)). Is it possible to provide a useful polyfill for these cache control headers? (This may be particularly useful in the future if [foreign fetch](https://www.chromestatus.com/feature/5684130679357440) is implemented.)
+* **To implement different caching strategies on top of HTTP.** HTTP has sophisticated, well-defined, and well-understood caching features, and so it might make sense to implement different caching strategies via simple header-manipulating wrappers on top of a generic HTTP proxy, instead of writing strategy-specific cache manipulation code. Is this a viable approach?
+
+(Plus another big reason--to learn service workers in some detail!)
 
 ## Examples
 
@@ -24,24 +26,20 @@ $ npm start
 # open http://127.0.0.1:8000/
 ````
 
-The examples only touch the images--everything else is passed through.
-
 Recommendations:
 
 * Keep the "server" terminal window open to see when requests are really made.
 * Open DevTools.
-* Turn on network throttling and use the slowest speed.
+* Turn on network throttling to the slowest speed.
 
 Notes:
 
 * The cache and service workers are reset every time `index.html` is loaded.
-* The examples are initiated via an interstitial page that installs and activates the service worker. There are ways around this, but they make the examples more difficult to follow.
+* The examples are initiated via an interstitial page that installs and activates the service worker. This is slightly ugly, but it makes the examples a lot easier to follow.
 
-## Status
+## Questions
 
-It's a proof-of-concept. I did this to learn more about service workers, because
-I like HTTP, and because I wanted to see what can be accomplished with an
-RFC-compliant HTTP Proxy.  
+
 
 ## Author
 
