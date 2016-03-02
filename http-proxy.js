@@ -3,8 +3,8 @@
 // ## TODO
 //
 // * Tests.
-// * Cache expiration (am assuming the browser will behave "sensibly"
-//   here--it may not be necessary to do anything.
+// * Cache expiration.
+// * Robustness.
 
 var VERSION = "v" + new Date().toISOString().substr(11, 8);
 
@@ -264,9 +264,14 @@ function newRequest(req, headerFn) {
 
 // ## HttpProxy
 //
-// Implements a [RFC 7234](https://tools.ietf.org/html/rfc7234)-compliant HTTP
+// Implements a [RFC 7234](https://tools.ietf.org/html/rfc7234)/[RFC
+// 5861](https://tools.ietf.org/html/rfc5861) compliant HTTP
 // cache. (Well, that's the idea anyway. There's probably quite a few bugs.)
 
+// ### HttpProxy.add(cache, reqFn, resFn)
+//
+// Constructor. `cache` is the cache name (a string); `reqFn` and `resFn` are
+// (optional) functions that transform the request and response.
 /**
  * @param {string} cache name
  * @param {function} [reqFn] transforms request (Request → Request)
@@ -330,10 +335,12 @@ HttpProxy.prototype.add = function (req) {
 }
 
 // ### HttpProxy.fetch()
-
+//
+// Parallels the global `fetch()` function; takes a `Request` and returns a
+// Promise resolving to a `Response`.
 /**
- * @param  {Request} req [description]
- * @return {[type]}     [description]
+ * @param  {Request} req
+ * @return {Promise<Response>}
  */
 HttpProxy.prototype.fetch = function (req) {
 
