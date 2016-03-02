@@ -37,10 +37,6 @@ Notes:
 * The cache and service workers are reset every time `index.html` is loaded.
 * The examples are initiated via an interstitial page that installs and activates the service worker. This is slightly ugly, but it makes the examples a lot easier to follow.
 
-## Questions
-
-
-
 ## Author
 
 Michael Stillwell (stillers@)
