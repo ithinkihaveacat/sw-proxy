@@ -1,0 +1,64 @@
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="register-ready.js"></script>
+  <script>
+    registerReady("stale-if-error.js").then(function () {
+      console.log("ACTIVE");
+    });
+  </script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://code.getmdl.io/1.1.1/material.indigo-pink.min.css">
+  <script defer src="https://code.getmdl.io/1.1.1/material.min.js"></script>
+</head>
+
+<body>
+
+  <div class="mdl-grid">
+    <div class="mdl-cell mdl-cell--6-col">
+      <div class="mdl-card mdl-shadow--8dp">
+        <div class="mdl-card__title">
+          <h1 class="mdl-card__title-text">Stale If Error</h1>
+        </div>
+        <div class="mdl-card__supporting-text">
+
+          <p>This strategy transforms the headers of the following images so
+          that they get a <tt>cache-control</tt> header of <tt>max-age=30,
+          stale-if-error=30</tt>.</p>
+
+          <p>This has the behavior:
+
+            <ul>
+
+              <li><strong>image was retrieved less than 30 seconds ago</strong> -
+              cached image is returned</li>
+
+              <li><strong>image was retrieved between than 30 and 60 seconds
+              ago</strong> - attempt to retrieve image via network; if network
+              error (e.g. offline), return cached image</li>
+
+              <li><strong>image was retrieved more than 60 seconds ago, or not
+              in cache</strong> - image is retrieved from network</li>
+
+            </ul>
+
+          </p>
+
+          <p>To test, use Chrome's DevTools to disable network after the initial
+          page load. Note that
+
+          <img id="img00" src="/jpg/00.jpg">
+          <img id="img01" src="/jpg/01.jpg">
+          <img id="img02" src="/jpg/02.jpg">
+          <img id="img03" src="/jpg/03.jpg">
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</body>
+
+</html>
