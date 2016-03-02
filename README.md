@@ -1,5 +1,7 @@
 # HTTP Proxy Proof-of-Concept
 
+*This is not an official Google product!*
+
 ## Motivation
 
 Perhaps surprisingly, the service worker cache [does not behave like a standard
