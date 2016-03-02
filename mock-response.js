@@ -16,7 +16,7 @@ limitations under the License. */
 
 self.importScripts("http-proxy.js");
 
-var VERSION = "CACHE-WARM.JS v" + new Date().toISOString().substr(11, 8);
+var VERSION = "MOCK-RESPONSE.JS v" + new Date().toISOString().substr(11, 8);
 
 console.log(VERSION);
 

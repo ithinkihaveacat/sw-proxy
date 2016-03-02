@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="register-ready.js"></script>
   <script>
-  registerReady("cache-synthetic.js").then(function () {
+  registerReady("mock-response.js").then(function () {
     console.log("ACTIVE");
   });
   </script>
@@ -20,11 +20,11 @@
     <div class="mdl-cell mdl-cell--6-col">
       <div class="mdl-card mdl-shadow--8dp">
         <div class="mdl-card__title">
-          <h1 class="mdl-card__title-text">Cache Synthetic</h1>
+          <h1 class="mdl-card__title-text">Mock Response</h1>
         </div>
         <div class="mdl-card__supporting-text">
 
-          <p>Injects an artificial <tt>/quote.txt</tt> into the cache, which is
+          <p>Injects an mock <tt>/quote.txt</tt> into the cache, which is
           retrieved via <tt>fetch('/quote.txt')</tt> and shown below.</p>
 
           <blockquote id="quote"></blockquote>

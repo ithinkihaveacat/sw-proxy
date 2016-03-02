@@ -16,7 +16,7 @@ limitations under the License. */
 
 importScripts("http-proxy.js");
 
-var VERSION = "NETWORK-ONLY.JS v" + new Date().toISOString().substr(11, 8);
+var VERSION = "PRE-FETCH.JS v" + new Date().toISOString().substr(11, 8);
 
 console.log(VERSION);
 
