@@ -34,17 +34,11 @@ function registerReady(script, options) {
 
   return navigator.serviceWorker.register(script, options).then(function (r) {
 
-    if (r.active) {
-      return r;
-    }
-
-    var incoming = r.installing || r.waiting;
-
     return new Promise(function (resolve) {
-      // Might have actived between the check above and now
       if (r.active) {
         resolve(r);
       } else {
+        var incoming = r.installing || r.waiting;
         incoming.onstatechange = function (e) {
           if (e.target.state === "activated") {
             incoming.onstatechange = null;
