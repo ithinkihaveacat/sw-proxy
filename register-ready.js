@@ -34,22 +34,16 @@ function registerReady(script, options) {
 
   return navigator.serviceWorker.register(script, options).then(function (r) {
 
-    if (r.active) {
+    var incoming = r.installing || r.waiting;
+    if (r.active && !incoming) {
       return r;
     }
 
-    var incoming = r.installing || r.waiting;
-
     return new Promise(function (resolve) {
-      // Might have actived between the check above and now
-      if (r.active) {
-        resolve(r);
-      } else {
-        incoming.onstatechange = function (e) {
-          if (e.target.state === "activated") {
-            incoming.onstatechange = null;
-            resolve(r);
-          }
+      incoming.onstatechange = function (e) {
+        if (e.target.state === "activated") {
+          incoming.onstatechange = null;
+          resolve(r);
         }
       }
     });
