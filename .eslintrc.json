@@ -1,12 +1,6 @@
 {
-  "extends": "google",
   "installedESLint": true,
   "env": {
     "es6": true
-  },
-  // http://eslint.org/docs/rules/
-  "rules": {
-    "require-jsdoc": 0,
-    "no-console": 0
   }
 }

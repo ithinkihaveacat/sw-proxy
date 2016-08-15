@@ -14,35 +14,36 @@ limitations under the License. */
 
 /* eslint-env serviceworker, browser */
 
-self.importScripts("http-proxy.js");
+importScripts("http-proxy.js");
 
-var VERSION = "STALE-WHILE-REVALIDATE.JS v" + new Date().toISOString().substr(11, 8);
-
-console.log(VERSION);
+console.log("NETWORK-ONLY.JS v" + new Date().toISOString().substr(11, 8));
 
 var CACHE = "MYCACHE";
 
-self.skipWaitingAndClaim(self);
+skipWaitingAndClaim(self);
 
-self.addEventListener('fetch', function (event) {
+self.addEventListener('fetch', function (event: FetchEvent) {
+
+  console.log("FETCH EVENT", event.request.url);
 
   // Function to transform responses
-  function resFn(req, res) {
+  function resFn(req: Request, res: Response): Promise<Response> {
     // Only transform JPGs
     if (req.url.match("jpg$")) {
       return newResponse(res, function (headers) {
-        // Set cache-control header
-        headers.set("cache-control", "max-age=10, stale-while-revalidate=50");
+        // Cache responses for a week
+        headers.set("cache-control", "max-age=86000");
         headers.set("date", new Date().toUTCString());
         return headers;
       });
     } else {
-      return res;
+      return Promise.resolve(res);
     }
   }
 
+  // Configure the proxy
   var proxy = new HttpProxy(CACHE, null, resFn);
 
   event.respondWith(proxy.fetch(event.request));
-
+  
 });
