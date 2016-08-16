@@ -14,29 +14,27 @@ limitations under the License. */
 
 /* eslint-env serviceworker, browser */
 
-self.importScripts("http-proxy.js");
+importScripts("http-proxy.js");
 
-var VERSION = "STALE-IF-ERROR.JS v" + new Date().toISOString().substr(11, 8);
-
-console.log(VERSION);
+console.log("NETWORK-ONLY.JS v" + new Date().toISOString().substr(11, 8));
 
 var CACHE = "MYCACHE";
 
-self.skipWaitingAndClaim(self);
+skipWaitingAndClaim(self);
 
-self.addEventListener('fetch', function (event) {
+self.addEventListener('fetch', function (event: FetchEvent) {
 
-  // Function to transform responses
-  function resFn(req, res) {
-    return newResponse(res, function (headers) {
-      // Set cache-control header
-      headers.set("cache-control", "max-age=30, stale-if-error=30");
-      headers.set("date", new Date().toUTCString());
+  // Function to transform requests
+  function reqFn(req: Request) {
+    return newRequest(req, function (headers) {
+      // Don't use the cache, ever
+      headers.set("cache-control", "no-cache");
+      headers.set("x-strategy", "network-only");
       return headers;
     });
   }
 
-  var proxy = new HttpProxy(CACHE, null, resFn);
+  var proxy = new HttpProxy(CACHE, reqFn);
 
   event.respondWith(proxy.fetch(event.request));
 

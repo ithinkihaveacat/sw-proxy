@@ -16,18 +16,16 @@ limitations under the License. */
 
 importScripts("http-proxy.js");
 
-var VERSION = "PRE-FETCH.JS v" + new Date().toISOString().substr(11, 8);
-
-console.log(VERSION);
+console.log("PRE-FETCH.JS v" + new Date().toISOString().substr(11, 8));
 
 var CACHE = "MYCACHE";
 
-self.skipWaitingAndClaim(self);
+skipWaitingAndClaim(self);
 
 function getProxy() {
 
     // Function to transform responses
-    function resFn(req, res) {
+    function resFn(req: Request, res: Response): Promise<Response> {
       // Only transform JPGs
       if (req.url.match("jpg$")) {
         return newResponse(res, function (headers) {
@@ -37,7 +35,7 @@ function getProxy() {
           return headers;
         });
       } else {
-        return res;
+        return Promise.resolve(res);
       }
     }
 
@@ -47,7 +45,7 @@ function getProxy() {
 }
 
 // Load (and cache) the images when the service worker is installed.
-self.addEventListener('install', function (event) {
+self.addEventListener('install', function (event: InstallEvent) {
 
   // We're not handling the "fetch" event yet, so we need to pass requests
   // through the proxy "manually" (rather than just doing a `fetch()`), and
@@ -66,7 +64,7 @@ self.addEventListener('install', function (event) {
 
 });
 
-self.addEventListener('fetch', function (event) {
+self.addEventListener('fetch', function (event: FetchEvent) {
 
   console.log("FETCH EVENT", event.request.url);
 

@@ -12,6 +12,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. */
 
+/// <reference path="service-worker.d.ts"/>
+
 /* eslint-env serviceworker, browser */
 
 // ## TODO
@@ -20,11 +22,7 @@ limitations under the License. */
 // * Cache expiration.
 // * Robustness.
 
-var VERSION = "v" + new Date().toISOString().substr(11, 8);
-
-console.log("HTTP-PROXY.JS", VERSION);
-
-"use strict";
+console.log("HTTP-PROXY.JS", "v" + new Date().toISOString().substr(11, 8));
 
 var now = function () {
   return new Date().getTime();
@@ -40,16 +38,18 @@ var now = function () {
  * @param  {string} header HTTP header
  * @return {object}
  */
-function parseHeader(header) {
-  return !header.trim() ? {} : header.trim().split(/\s*,\s*/).sort().reduce(function (p, c) {
-    var t = c.split(/\s*=\s*/, 2);
+function parseHeader(header: string): { [k: string]: string } {
+  return !header.trim() ? {} : header.trim().split(/\s*,\s*/).sort().reduce(
+    function (p: { [k: string]: string },
+    c: string) {
+    let t = c.split(/\s*=\s*/, 2);
     p[t[0].toLowerCase()] = t[1];
     return p;
   }, {});
 }
 
 // Returns the number of milliseconds since the Resource was cached.
-function age(res) {
+function age(res: Response) {
   if (!res.headers.has("date")) {
     console.warn("NO DATE");
     return 0;
@@ -59,14 +59,14 @@ function age(res) {
 
 // Returns number of milliseconds until the resource expires. This number will
 // be negative if the expiration time is in the past.
-function expires(res) {
+function expires(res: Response) {
 
   if (res.headers.has("cache-control")) {
-    var h = parseHeader(res.headers.get("cache-control"));
+    const h = parseHeader(res.headers.get("cache-control"));
     if ("s-maxage" in h) {
-      return (h["s-maxage"] * 1000) - age(res);
+      return (parseInt(h["s-maxage"], 10) * 1000) - age(res);
     } else if ("max-age" in h) {
-      return (h["max-age"] * 1000) - age(res);
+      return (parseInt(h["max-age"], 10) * 1000) - age(res);
     }
   }
 
@@ -75,7 +75,7 @@ function expires(res) {
 
 // Returns **true** if the freshness requirements of the `Request` and
 // `Response` are satisfied, otherwise **false**.
-function freshMatch(res, req) {
+function freshMatch(res: Response, req: Request) {
 
   // Server must whitelist cached response via `s-maxage` or `max-age`.
   function serverMatch() {
@@ -83,12 +83,12 @@ function freshMatch(res, req) {
       return false;
     }
 
-    var h = parseHeader(res.headers.get("cache-control"));
+    const h = parseHeader(res.headers.get("cache-control"));
 
     if ("s-maxage" in h) {
-      return (h["s-maxage"] * 1000) > age(res);
+      return (parseInt(h["s-maxage"], 10) * 1000) > age(res);
     } else if ("max-age" in h) {
-      return (h["max-age"] * 1000) > age(res);
+      return (parseInt(h["max-age"], 10) * 1000) > age(res);
     } else {
       return false;
     }
@@ -105,9 +105,9 @@ function freshMatch(res, req) {
     if ("no-cache" in h) {
       return false;
     } else if ("max-age" in h) {
-      return (h["max-age"] * 1000) <= age(res);
+      return (parseInt(h["max-age"], 10) * 1000) <= age(res);
     } else if ("min-fresh" in h) {
-      return (h["min-fresh"] * 1000) <= expires(res);
+      return (parseInt(h["min-fresh"], 10) * 1000) <= expires(res);
     } else {
       return true;
     }
@@ -119,7 +119,7 @@ function freshMatch(res, req) {
 
 // Returns **true** if the "staleness" requirements of the `Request` and
 // `Response` are satisfied, otherwise **false**.
-function staleMatch(res, req) {
+function staleMatch(res: Response, req: Request) {
 
   // Server must whitelist via [`stale-while-revalidate`](https://tools.ietf.org/html/rfc5861#section-3).
   function serverMatch() {
@@ -132,8 +132,8 @@ function staleMatch(res, req) {
     if ("must-revalidate" in h) {
       return false;
     } else if ("stale-while-revalidate" in h) {
-      var maxAge = ("max-age" in h) ? (h["max-age"] * 1000) : 0;
-      return (maxAge + (h["stale-while-revalidate"] * 1000)) >= age(res);
+      var maxAge = ("max-age" in h) ? (parseInt(h["max-age"], 10) * 1000) : 0;
+      return (maxAge + (parseInt(h["stale-while-revalidate"], 10) * 1000)) >= age(res);
     } else {
       return false;
     }
@@ -148,7 +148,7 @@ function staleMatch(res, req) {
     var h = parseHeader(req.headers.get("cache-control"));
 
     if ("max-stale" in h) {
-      return (expires(res) + (h["max-stale"] * 1000)) >= 0;
+      return (expires(res) + (parseInt(h["max-stale"], 10) * 1000)) >= 0;
     } else {
       return true;
     }
@@ -160,7 +160,7 @@ function staleMatch(res, req) {
 
 // Returns **true** if the response satisfies `stale-if-error` requirements,
 // otherwise **false**.
-function errorMatch(res) {
+function errorMatch(res: Response) {
 
   // Server can whitelist via `stale-if-error`.
   function serverMatch() {
@@ -171,7 +171,7 @@ function errorMatch(res) {
     var h = parseHeader(res.headers.get("cache-control"));
 
     if ("stale-if-error" in h) {
-      return (h["stale-if-error"] * 1000) >= age(res);
+      return (parseInt(h["stale-if-error"], 10) * 1000) >= age(res);
     } else {
       return false;
     }
@@ -188,7 +188,7 @@ function errorMatch(res) {
 
 // Returns **true** if the client will accept a cached response, otherwise
 // **false**.
-function cacheSufficient(req) {
+function cacheSufficient(req: Request) {
   return !req.headers.has("cache-control") ||
     (req.headers.get("cache-control").indexOf("no-cache") === -1) ||
     !("no-cache" in parseHeader(req.headers.get("cache-control")));
@@ -197,7 +197,7 @@ function cacheSufficient(req) {
 // Returns **true** if the client requires a cached response, otherwise
 // **false**. (See
 // [RFC7234](https://tools.ietf.org/html/rfc7234#section-5.2.1.7).)
-function cacheNecessary(req) {
+function cacheNecessary(req: Request) {
   return (req.headers.has("cache-control")) &&
     ("only-if-cached" in parseHeader(req.headers.get("cache-control")));
 }
@@ -211,7 +211,7 @@ function cacheNecessary(req) {
  * @return {Promise<Response>}
  */
 /* exported newResponse */
-function newResponse(res, headerFn) {
+function newResponse(res: Response, headerFn?: (h: Headers) => void) {
 
   // This function is necessary because sadly [res.headers is
   // read-only](https://developer.mozilla.org/en-US/docs/Web/API/Response/headers)…
@@ -223,14 +223,14 @@ function newResponse(res, headerFn) {
     return headers;
   }
 
-  var headers = headerFn ? headerFn(cloneHeaders()) : res.headers;
+  const headers = headerFn ? headerFn(cloneHeaders()) : res.headers;
 
   return new Promise(function (resolve) {
     return res.blob().then(function (blob) {
       resolve(new Response(blob, {
         status: res.status,
         statusText: res.statusText,
-        headers: headers
+        headers: headers!
       }));
     });
   });
@@ -246,7 +246,7 @@ function newResponse(res, headerFn) {
  * @return {Promise<Request>}
  */
 /* exported newRequest */
-function newRequest(req, headerFn) {
+function newRequest(req: Request, headerFn?: (h: Headers) => void) {
 
   // This function is necessary because sadly [res.headers is
   // read-only](https://developer.mozilla.org/en-US/docs/Web/API/Response/headers)…
@@ -264,14 +264,13 @@ function newRequest(req, headerFn) {
   return Promise.resolve(new Request(req.url, {
     method: req.method,
     url: req.url,
-    context: req.context,
     referrer: req.referrer,
     mode: 'same-origin', // http://stackoverflow.com/a/35421858/11543
     credentials: req.credentials,
     redirect: req.redirect, // Should be 'manual'? http://stackoverflow.com/a/35421858/11543
     integrity: req.integrity,
     cache: req.cache,
-    headers: headers
+    headers: headers!
   }));
 
 }
@@ -291,152 +290,159 @@ function newRequest(req, headerFn) {
  * @param {function} [reqFn] transforms request (Request → Request)
  * @param {function} [resFn] transforms response ((Request, Response) → Response)
  */
-/* exported HttpProxy */
-function HttpProxy(cache, reqFn, resFn) {
-  this.cache = cache;
-  this.reqFn = reqFn;
-  this.resFn = resFn;
-}
 
-// ### HttpProxy.add()
-//
-// Parallels
-// [`Cache.add()`](https://developer.mozilla.org/en-US/docs/Web/API/Cache/add);
-// takes a `Request` and returns a Promise resolving to a `Response`. The
-// `Response` can optionally be transformed by the instance variable `resFn`.
+class HttpProxy {
 
-/**
- * @param {Request} req
- * @return {Promise<Response>}
- */
-HttpProxy.prototype.add = function (req) {
+  private cache: string;
+  private reqFn: null|((r: Request) => (Request|Promise<Request>));
+  private resFn: null|((req: Request, res: Response) => (Response|Promise<Response>));
 
-  var cache = this.cache;
-  // `resFn` transforms the `Response`, if provided.
-  var resFn = this.resFn ? this.resFn.bind(null, req) : function (obj) {
-    return obj;
+  constructor(
+    cache: string,
+    reqFn?: null|((r: Request) => (Request|Promise<Request>)),
+    resFn?: null|((req: Request, res: Response) => (Response|Promise<Response>))) {
+    this.cache = cache;
+    this.reqFn = reqFn || null;
+    this.resFn = resFn || null;
   }
 
-  // Fetch `req` and transform `Response`.
-  return fetch(req).then(resFn).then(function (res) {
+  // ### HttpProxy.add()
+  //
+  // Parallels
+  // [`Cache.add()`](https://developer.mozilla.org/en-US/docs/Web/API/Cache/add);
+  // takes a `Request` and returns a Promise resolving to a `Response`. The
+  // `Response` can optionally be transformed by the instance variable `resFn`.
 
-    function canCache() {
-      return (res.status === 200) &&
-        res.headers.has("cache-control") &&
-        !("no-store" in parseHeader(res.headers.get("cache-control")));
-    }
+  /**
+   * @param {Request} req
+   * @return {Promise<Response>}
+   */
+  public add(req: Request): Promise<Response> {
 
-    // If the `Response` allows caching, save it.
-    if (canCache()) {
-      if (!res.headers.has("date")) {
-        console.warn(req.url, "MISSING DATE HEADER");
+    var cache = this.cache;
+    // `resFn` transforms the `Response`, if provided.
+    var resFn = this.resFn ? this.resFn.bind(null, req) : ((req: Request, res: Response) => res);
+
+    // Fetch `req` and transform `Response`.
+    return fetch(req).then(resFn).then(function (res: Response) {
+
+      function canCache() {
+        return (res.status === 200) &&
+          res.headers.has("cache-control") &&
+          !("no-store" in parseHeader(res.headers.get("cache-control")));
       }
-      caches.open(cache).then(function (cache) {
-        console.log(req.url, "ADDING TO CACHE");
-        cache.put(req, res.clone()); /* [1] */
-      });
-    }
 
-    return res.clone(); /* [2] */
-
-    /* We clone() at both [1] and [2] because otherwise (at least I think this
-    /* is what happens), the res returned at [2] can get drained by the caller
-    /* before we attempt the clone() at [1], at which point it's too late.
-    /* (Always Be Cloning, basically.) */
-
-  });
-
-}
-
-// ### HttpProxy.fetch()
-//
-// Parallels the global `fetch()` function; takes a `Request` and returns a
-// Promise resolving to a `Response`.
-/**
- * @param  {Request} req
- * @return {Promise<Response>}
- */
-HttpProxy.prototype.fetch = function (req) {
-
-  if (typeof req === "string") {
-    req = new Request(req);
-  }
-
-  function sameOrigin() {
-    var origin = self.location.protocol + "//" + self.location.host;
-    return req.url.startsWith(origin);
-  }
-
-  // Abort if req is not on the same origin--we can't inspect headers in that
-  // case, and so can't effectively proxy.
-  if (!sameOrigin()) {
-    return fetch(req);
-  }
-
-  var add = this.add.bind(this);
-  var cache = this.cache;
-
-  // `reqFn` transforms the `Request`, if provided.
-  var reqFn = this.reqFn ? this.reqFn : function (obj) {
-    return obj;
-  }
-
-  return Promise.resolve(req).then(reqFn).then(function (req) {
-
-    // If a cached response is not acceptable, try the network.
-    if (!cacheSufficient(req)) {
-      return add(req);
-    }
-
-    // Look for responses matching `Request` `req` in the cache.
-    return caches.open(cache).then(function (cache) {
-      return cache.match(req).then(function (res) {
-        // `Response` received …
-        if (res) {
-          // … if it's fresh, ship it.
-          if (freshMatch(res, req)) {
-            return res;
-          }
-          // … if it's stale, ship it (and revalidate).
-          else if (staleMatch(res, req)) {
-            add(req);
-            return res;
-          }
-          // … otherwise, try the network (and delete from the cache).
-          else {
-            cache.delete(req);
-            return add(req)
-              .then(function (r) {
-                if (r.status < 500) {
-                  return r;
-                } else {
-                  return errorMatch(res, req) ? res : r;
-                }
-              })
-              .catch(function (r) {
-                /* TODO Handle authentication errors */
-                return errorMatch(res, req) ? res : Promise.reject(r);
-              });
-          }
+      // If the `Response` allows caching, save it.
+      if (canCache()) {
+        if (!res.headers.has("date")) {
+          console.warn(req.url, "MISSING DATE HEADER");
         }
-        // No `Response` received …
-        else {
-          // … if a cached response is required, return a 504.
-          if (cacheNecessary(req)) {
-            return new Response("NOT CACHED", {
-              status: 504,
-              statusText: "Resource not cached"
-            });
-          }
-          // … otherwise, try the network.
-          else {
-            return add(req);
-          }
-        }
-      });
+        caches.open(cache).then(function (cache) {
+          console.log(req.url, "ADDING TO CACHE");
+          cache.put(req, res.clone()); /* [1] */
+        });
+      }
+
+      return res.clone(); /* [2] */
+
+      /* We clone() at both [1] and [2] because otherwise (at least I think this
+      /* is what happens), the res returned at [2] can get drained by the caller
+      /* before we attempt the clone() at [1], at which point it's too late.
+      /* (Always Be Cloning, basically.) */
+
     });
 
-  });
+  }
+
+  // ### HttpProxy.fetch()
+  //
+  // Parallels the global `fetch()` function; takes a `Request` and returns a
+  // Promise resolving to a `Response`.
+  /**
+   * @param  {Request} req
+   * @return {Promise<Response>}
+   */
+  public fetch(req: string|Request): Promise<Response> {
+
+    if (typeof req === "string") {
+      req = new Request(req);
+    }
+
+    function sameOrigin() {
+      var origin = self.location.protocol + "//" + self.location.host;
+      return (req as Request).url.startsWith(origin); // https://github.com/Microsoft/TypeScript/issues/10339
+    }
+
+    // Abort if req is not on the same origin--we can't inspect headers in that
+    // case, and so can't effectively proxy.
+    if (!sameOrigin()) {
+      return fetch(req);
+    }
+
+    var add = this.add.bind(this);
+    var cache = this.cache;
+
+    // `reqFn` transforms the `Request`, if provided.
+    var reqFn = this.reqFn ? this.reqFn : (r: Request) => r;
+
+    return Promise.resolve(req).then(reqFn).then(function (req: Request) {
+
+      // If a cached response is not acceptable, try the network.
+      if (!cacheSufficient(req)) {
+        return add(req);
+      }
+
+      // Look for responses matching `Request` `req` in the cache.
+      return caches.open(cache).then(function (cache) {
+        return cache.match(req).then(function (res) {
+          // `Response` received …
+          if (res) {
+            // … if it's fresh, ship it.
+            if (freshMatch(res, req)) {
+              return res;
+            }
+            // … if it's stale, ship it (and revalidate).
+            else if (staleMatch(res, req)) {
+              add(req);
+              return res;
+            }
+            // … otherwise, try the network (and delete from the cache).
+            else {
+              cache.delete(req);
+              return add(req)
+                .then(function (r: Response) {
+                  if (r.status < 500) {
+                    return r;
+                  } else {
+                    return errorMatch(res) ? res : r;
+                  }
+                })
+                .catch(function (e: any) {
+                  /* TODO Handle authentication errors */
+                  return errorMatch(res) ? res : Promise.reject(e);
+                });
+            }
+          }
+          // No `Response` received …
+          else {
+            // … if a cached response is required, return a 504.
+            if (cacheNecessary(req)) {
+              return new Response("NOT CACHED", {
+                status: 504,
+                statusText: "Resource not cached"
+              });
+            }
+            // … otherwise, try the network.
+            else {
+              return add(req);
+            }
+          }
+        });
+      });
+
+    });
+
+  }
 
 }
 
@@ -451,13 +457,13 @@ HttpProxy.prototype.fetch = function (req) {
  * @param  {ServiceWorkerGlobalScope} scope Probably `self`
  */
 /* exported skipWaitingAndClaim */
-function skipWaitingAndClaim(scope) {
+function skipWaitingAndClaim(scope: any) {
   /* http://stackoverflow.com/a/34681584/11543 */
-  scope.addEventListener('install', function (event) {
-    event.waitUntil(scope.skipWaiting());
+  scope.addEventListener('install', () => {
+    scope.skipWaiting();
   });
 
-  scope.addEventListener('activate', function (event) {
+  scope.addEventListener('activate', function (event: any) {
     event.waitUntil(scope.clients.claim());
   });
 }

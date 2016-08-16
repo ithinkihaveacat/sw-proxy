@@ -14,16 +14,14 @@ limitations under the License. */
 
 /* eslint-env serviceworker, browser */
 
-self.importScripts("http-proxy.js");
+importScripts("http-proxy.js");
 
-var VERSION = "MOCK-RESPONSE.JS v" + new Date().toISOString().substr(11, 8);
-
-console.log(VERSION);
+console.log("MOCK-RESPONSE.JS v" + new Date().toISOString().substr(11, 8));
 
 var CACHE = "MYCACHE";
 
 // The response for `/quote.txt`.
-function getEntries() {
+function getEntries(): { [k: string]: Response } {
   var body = [
     "The great roe is a mythological beast with the head",
     "of a lion and the body of a lion, though not the same",
@@ -43,14 +41,14 @@ function getEntries() {
   };
 }
 
-self.skipWaitingAndClaim(self);
+skipWaitingAndClaim(self);
 
 // On "install", inject responses into cache.
-self.addEventListener('install', function (event) {
+self.addEventListener('install', function (event: ExtendableEvent) {
   var entries = getEntries();
   event.waitUntil(
     caches.open(CACHE).then(function (cache) {
-      return Promise.all(Object.keys(entries).reduce(function (acc, url) {
+      return Promise.all(Object.keys(entries).reduce(function (acc: Promise<void>[], url: string) {
         acc.push(cache.put(url, entries[url]));
         return acc;
       }, []));
@@ -58,7 +56,7 @@ self.addEventListener('install', function (event) {
   );
 });
 
-self.addEventListener('fetch', function (event) {
+self.addEventListener('fetch', function (event: FetchEvent) {
   var proxy = new HttpProxy(CACHE);
   event.respondWith(proxy.fetch(event.request));
 });

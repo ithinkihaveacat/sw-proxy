@@ -14,11 +14,9 @@ limitations under the License. */
 
 /* eslint-env serviceworker, browser */
 
-self.importScripts("http-proxy.js");
+importScripts("http-proxy.js");
 
-var VERSION = "INDEX.JS v" + new Date().toISOString().substr(11, 8);
-
-console.log(VERSION);
+console.log("INDEX.JS v" + new Date().toISOString().substr(11, 8));
 
 function deleteAllCaches() {
   return caches.keys().then(function (cacheNames) {
@@ -37,9 +35,9 @@ function deleteAllCaches() {
 
 // ### "install"
 
-self.addEventListener('install', function (event) {
-  console.log("INSTALLING", VERSION);
+self.addEventListener('install', function (event: ExtendableEvent) {
+  console.log("INSTALLING" + new Date().toISOString().substr(11, 8));
   event.waitUntil(deleteAllCaches());
 });
 
-self.skipWaitingAndClaim(self);
+skipWaitingAndClaim(self);
