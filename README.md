@@ -41,4 +41,4 @@ Notes:
 
 ## Author
 
-Michael Stillwell (stillers@)
+Michael Stillwell <mjs@beebo.org>
