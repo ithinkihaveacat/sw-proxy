@@ -210,8 +210,7 @@ function cacheNecessary(req: Request) {
  * @param  {function} headerFn passed mutatable `Headers`
  * @return {Promise<Response>}
  */
-/* exported newResponse */
-function newResponse(res: Response, headerFn?: (h: Headers) => void) {
+export function newResponse(res: Response, headerFn?: (h: Headers) => void) {
 
   // This function is necessary because sadly [res.headers is
   // read-only](https://developer.mozilla.org/en-US/docs/Web/API/Response/headers)…
@@ -245,8 +244,7 @@ function newResponse(res: Response, headerFn?: (h: Headers) => void) {
  * @param  {function} headerFn passed mutable `Headers`
  * @return {Promise<Request>}
  */
-/* exported newRequest */
-function newRequest(req: Request, headerFn?: (h: Headers) => void) {
+export function newRequest(req: Request, headerFn?: (h: Headers) => void) {
 
   // This function is necessary because sadly [res.headers is
   // read-only](https://developer.mozilla.org/en-US/docs/Web/API/Response/headers)…
@@ -291,7 +289,7 @@ function newRequest(req: Request, headerFn?: (h: Headers) => void) {
  * @param {function} [resFn] transforms response ((Request, Response) → Response)
  */
 
-class HttpProxy {
+export class HttpProxy {
 
   private cache: string;
   private reqFn: null|((r: Request) => (Request|Promise<Request>));
@@ -456,8 +454,7 @@ class HttpProxy {
 /**
  * @param  {ServiceWorkerGlobalScope} scope Probably `self`
  */
-/* exported skipWaitingAndClaim */
-function skipWaitingAndClaim(scope: any) {
+export function skipWaitingAndClaim(scope: any) {
   /* http://stackoverflow.com/a/34681584/11543 */
   scope.addEventListener('install', () => {
     scope.skipWaiting();

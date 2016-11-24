@@ -283,3 +283,4 @@ declare var registration: ServiceWorkerRegistration;
 
 declare function fetch(request: Request|string): Promise<Response>;
 declare function skipWaiting(): void;
+declare function importScripts(url: string): void;

@@ -1,15 +1,12 @@
 {
   "name": "sw-proxy",
   "version": "0.0.1",
-  "devDependencies": {
-    "docco": "~0.7",
-    "http-server": "~0.9"
-  },
   "scripts": {
-    "prestart": "node_modules/.bin/docco *.ts",
-    "start": "node_modules/.bin/http-server -a localhost -c-1"
+    "prepublish": "tsc -p tsconfig.json --module commonjs --outDir dist/commonjs && tsc -p tsconfig.json --module es6 --outDir dist/es6"
   },
   "dependencies": {
-    "typescript": "^2.0.0"
-  }
+    "typescript": "^2.0.3"
+  },
+  "main": "dist/commonjs/http-proxy.js",
+  "jsnext:main": "dist/es6/http-proxy.js"
 }

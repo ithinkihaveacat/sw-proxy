@@ -14,6 +14,8 @@ limitations under the License. */
 
 /* eslint-env serviceworker, browser */
 
+import {newResponse, newRequest, skipWaitingAndClaim, HttpProxy} from "../http-proxy";
+
 importScripts("http-proxy.js");
 
 console.log("INDEX.JS v" + new Date().toISOString().substr(11, 8));

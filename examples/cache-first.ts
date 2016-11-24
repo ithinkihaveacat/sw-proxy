@@ -12,11 +12,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. */
 
-/* eslint-env serviceworker, browser */
+/// <reference path="../dist/es6/http-proxy.d.ts"/>
 
 importScripts("http-proxy.js");
 
-console.log("NETWORK-ONLY.JS v" + new Date().toISOString().substr(11, 8));
+console.log("CACHE-FIRST.JS v" + new Date().toISOString().substr(11, 8));
 
 var CACHE = "MYCACHE";
 
@@ -45,5 +45,5 @@ self.addEventListener('fetch', function (event: FetchEvent) {
   var proxy = new HttpProxy(CACHE, null, resFn);
 
   event.respondWith(proxy.fetch(event.request));
-  
+
 });
