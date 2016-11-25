@@ -25,6 +25,9 @@
     "typescript": "^2.0.10"
   },
   "scripts": {
-    "prepublish": "tsc -p tsconfig.json --module commonjs --outDir dist/commonjs && tsc -p tsconfig.json --module es6 --outDir dist/es6"
+    "preversion": "npm test",
+    "postversion": "git push && git push --tags",
+    "prepublish": "tsc -p tsconfig.json --module commonjs --outDir dist/commonjs && tsc -p tsconfig.json --module es6 --outDir dist/es6",
+    "test": "# TODO"
   }
 }
