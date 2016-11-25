@@ -1,7 +1,7 @@
 {
   "name": "sw-proxy",
   "version": "0.0.2",
-  "description": "A RFC7234 and RFC5861 compliant HTTP proxy library suitable for use within a service worker.",
+  "description": "A RFC-compliant HTTP proxy library for service workers.",
   "keywords": [
     "service-worker",
     "serviceworker",
