@@ -1,12 +1,21 @@
 {
   "name": "sw-proxy",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A RFC7234 and RFC5861 compliant HTTP proxy library suitable for use within a service worker.",
-  "keywords": [ "service-worker", "serviceworker", "proxy", "http", "rfc7234", "rfc5861" ],
+  "keywords": [
+    "service-worker",
+    "serviceworker",
+    "proxy",
+    "http",
+    "rfc7234",
+    "rfc5861"
+  ],
   "homepage": "https://github.com/ithinkihaveacat/sw-proxy",
   "license": "Apache-2.0",
   "author": "Michael Stillwell <mjs@beebo.org> (https://beebo.org/)",
-  "files": [ "dist" ],
+  "files": [
+    "dist"
+  ],
   "repository": "ithinkihaveacat/sw-proxy",
   "main": "dist/commonjs/http-proxy.js",
   "jsnext:main": "dist/es6/http-proxy.js",
