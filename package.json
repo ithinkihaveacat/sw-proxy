@@ -14,7 +14,8 @@
   "license": "Apache-2.0",
   "author": "Michael Stillwell <mjs@beebo.org> (https://beebo.org/)",
   "files": [
-    "dist"
+    "dist",
+    "service-worker.d.ts"
   ],
   "repository": "ithinkihaveacat/sw-proxy",
   "main": "dist/commonjs/http-proxy.js",
