@@ -20,6 +20,7 @@
   "repository": "ithinkihaveacat/sw-proxy",
   "main": "dist/commonjs/http-proxy.js",
   "jsnext:main": "dist/es6/http-proxy.js",
+  "types": "dist/commonjs/http-proxy.d.ts",
   "devDependencies": {
     "typescript": "^2.0.10"
   },
