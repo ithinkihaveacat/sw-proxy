@@ -22,12 +22,15 @@
   "jsnext:main": "dist/es6/http-proxy.js",
   "types": "dist/commonjs/http-proxy.d.ts",
   "devDependencies": {
-    "typescript": "^2.0.10"
+    "rollup": "^0.36.4",
+    "rollup-plugin-typescript": "^0.8.1",
+    "typescript": "^2.1.1"
   },
   "scripts": {
     "preversion": "npm test",
     "prepublish": "tsc -p tsconfig.json --module commonjs --outDir dist/commonjs && tsc -p tsconfig.json --module es6 --outDir dist/es6",
     "postpublish": "git push && git push --tags",
-    "test": "# TODO"
+    "test": "# TODO",
+    "examples": "cd examples ; for f in *.ts ; do rollup -c -i $f -o `basename $f .ts`.js ; done"
   }
 }
