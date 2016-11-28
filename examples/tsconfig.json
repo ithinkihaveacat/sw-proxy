@@ -1,7 +1,7 @@
 {
   // https://www.typescriptlang.org/docs/handbook/compiler-options.html
   "compilerOptions": {
-    "module": "system",
+    "module": "es6",
     "target": "es5",
     "lib": ["es5", "es2015.core", "es2015.promise", "es2015.symbol.wellknown", "dom"],
     "noImplicitAny": true,
