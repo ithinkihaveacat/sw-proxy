@@ -27,6 +27,7 @@ interface ExtendableEvent extends Event {
 interface ServiceWorker extends Worker {
 	scriptURL: string;
 	state: ServiceWorkerState;
+	onstatechange: ((event: Event) => any)|null;
 }
 
 interface ServiceWorkerContainer {
