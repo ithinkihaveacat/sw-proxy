@@ -14,7 +14,7 @@ limitations under the License. */
 
 /* eslint-env serviceworker, browser */
 
-importScripts("http-proxy.js");
+import {skipWaitingAndClaim,newResponse,HttpProxy} from "../http-proxy";
 
 console.log("STALE-IF-ERROR.JS v" + new Date().toISOString().substr(11, 8));
 

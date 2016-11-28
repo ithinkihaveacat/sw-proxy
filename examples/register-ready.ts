@@ -26,10 +26,10 @@ limitations under the License. */
 // There's [a proposal](https://github.com/slightlyoff/ServiceWorker/issues/770)
 // to make something similar part of the service worker spec.
 /* exported registerReady */
-function registerReady(script, options) {
+function registerReady(script: string, options: any) {
 
   if (!('serviceWorker' in navigator)) {
-    return new Promise();
+    return;
   }
 
   return navigator.serviceWorker.register(script, options).then(function (r) {
@@ -40,9 +40,9 @@ function registerReady(script, options) {
     }
 
     return new Promise(function (resolve) {
-      incoming.onstatechange = function (e) {
-        if (e.target.state === "activated") {
-          incoming.onstatechange = null;
+      incoming!.onstatechange = function (e) {
+        if ((e.target as ServiceWorker).state === "activated") {
+          incoming!.onstatechange = null;
           resolve(r);
         }
       }

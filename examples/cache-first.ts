@@ -12,9 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. */
 
-/// <reference path="../dist/es6/http-proxy.d.ts"/>
-
-importScripts("http-proxy.js");
+import {skipWaitingAndClaim,newResponse,HttpProxy} from "../http-proxy";
 
 console.log("CACHE-FIRST.JS v" + new Date().toISOString().substr(11, 8));
 
