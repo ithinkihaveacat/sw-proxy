@@ -14,7 +14,7 @@ limitations under the License. */
 
 /* eslint-env serviceworker, browser */
 
-import {newResponse, newRequest, skipWaitingAndClaim, HttpProxy} from "../http-proxy";
+import {newResponse, newRequest, skipWaitingAndClaim, Proxy} from "../http-proxy";
 
 importScripts("http-proxy.js");
 

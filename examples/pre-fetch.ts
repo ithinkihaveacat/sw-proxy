@@ -14,7 +14,7 @@ limitations under the License. */
 
 /* eslint-env serviceworker, browser */
 
-import {skipWaitingAndClaim,newResponse,HttpProxy} from "../http-proxy";
+import {skipWaitingAndClaim,newResponse,Proxy} from "../http-proxy";
 
 console.log("PRE-FETCH.JS v" + new Date().toISOString().substr(11, 8));
 
@@ -40,7 +40,7 @@ function getProxy() {
     }
 
     // Configure the proxy
-    return new HttpProxy(CACHE, null, resFn);
+    return new Proxy(CACHE, null, resFn);
 
 }
 

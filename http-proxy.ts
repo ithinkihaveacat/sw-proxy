@@ -12,16 +12,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. */
 
-// Doesn't seem to be an authoritative source of service worker definitions; reference these
-// hand-written definitions for now.
+// There doesn't seem to be an authoritative source of service worker
+// definitions; reference these hand-written definitions for now.
 
 /// <reference path="service-worker.d.ts"/>
-
-// ## TODO
-//
-// * Tests.
-// * Cache expiration.
-// * Robustness.
 
 console.log("HTTP-PROXY.JS", "v" + new Date().toISOString().substr(11, 8));
 
@@ -290,7 +284,7 @@ export function newRequest(req: Request, headerFn?: (h: Headers) => void) {
  * @param {function} [resFn] transforms response ((Request, Response) → Response)
  */
 
-export class HttpProxy {
+export class Proxy {
 
   private cache: string;
   private reqFn: null|((r: Request) => (Request|Promise<Request>));

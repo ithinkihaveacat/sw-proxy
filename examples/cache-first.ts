@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. */
 
-import {skipWaitingAndClaim,newResponse,HttpProxy} from "../http-proxy";
+import {skipWaitingAndClaim,newResponse,Proxy} from "../http-proxy";
 
 console.log("CACHE-FIRST.JS v" + new Date().toISOString().substr(11, 8));
 
@@ -40,7 +40,7 @@ self.addEventListener('fetch', function (event: FetchEvent) {
   }
 
   // Configure the proxy
-  var proxy = new HttpProxy(CACHE, null, resFn);
+  var proxy = new Proxy(CACHE, null, resFn);
 
   event.respondWith(proxy.fetch(event.request));
 

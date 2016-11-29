@@ -14,7 +14,7 @@ limitations under the License. */
 
 /* eslint-env serviceworker, browser */
 
-import {skipWaitingAndClaim,newResponse,HttpProxy} from "../http-proxy";
+import {skipWaitingAndClaim,newResponse,Proxy} from "../http-proxy";
 
 console.log("MOCK-RESPONSE.JS v" + new Date().toISOString().substr(11, 8));
 
@@ -57,6 +57,6 @@ self.addEventListener('install', function (event: ExtendableEvent) {
 });
 
 self.addEventListener('fetch', function (event: FetchEvent) {
-  var proxy = new HttpProxy(CACHE);
+  var proxy = new Proxy(CACHE);
   event.respondWith(proxy.fetch(event.request));
 });

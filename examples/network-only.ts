@@ -14,7 +14,7 @@ limitations under the License. */
 
 /* eslint-env serviceworker, browser */
 
-import {skipWaitingAndClaim,newRequest,HttpProxy} from "../http-proxy";
+import {skipWaitingAndClaim,newRequest,Proxy} from "../http-proxy";
 
 console.log("NETWORK-ONLY.JS v" + new Date().toISOString().substr(11, 8));
 
@@ -34,7 +34,7 @@ self.addEventListener('fetch', function (event: FetchEvent) {
     });
   }
 
-  var proxy = new HttpProxy(CACHE, reqFn);
+  var proxy = new Proxy(CACHE, reqFn);
 
   event.respondWith(proxy.fetch(event.request));
 
