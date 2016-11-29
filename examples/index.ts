@@ -18,8 +18,6 @@ import {newResponse, newRequest, skipWaitingAndClaim, Proxy} from "../proxy";
 
 importScripts("http-proxy.js");
 
-console.log("INDEX.JS v" + new Date().toISOString().substr(11, 8));
-
 function deleteAllCaches() {
   return caches.keys().then(function (cacheNames) {
     return Promise.all(

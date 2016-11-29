@@ -16,8 +16,6 @@ limitations under the License. */
 
 import {skipWaitingAndClaim,newResponse,Proxy} from "../proxy";
 
-console.log("MOCK-RESPONSE.JS v" + new Date().toISOString().substr(11, 8));
-
 var CACHE = "MYCACHE";
 
 // The response for `/quote.txt`.

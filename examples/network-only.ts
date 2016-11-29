@@ -16,8 +16,6 @@ limitations under the License. */
 
 import {skipWaitingAndClaim,newRequest,Proxy} from "../proxy";
 
-console.log("NETWORK-ONLY.JS v" + new Date().toISOString().substr(11, 8));
-
 var CACHE = "MYCACHE";
 
 skipWaitingAndClaim(self);
