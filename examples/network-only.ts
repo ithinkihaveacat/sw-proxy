@@ -14,7 +14,7 @@ limitations under the License. */
 
 /* eslint-env serviceworker, browser */
 
-import {skipWaitingAndClaim,newRequest,Proxy} from "../http-proxy";
+import {skipWaitingAndClaim,newRequest,Proxy} from "../proxy";
 
 console.log("NETWORK-ONLY.JS v" + new Date().toISOString().substr(11, 8));
 

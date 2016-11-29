@@ -14,7 +14,7 @@ limitations under the License. */
 
 /* eslint-env serviceworker, browser */
 
-import {skipWaitingAndClaim,newResponse,Proxy} from "../http-proxy";
+import {skipWaitingAndClaim,newResponse,Proxy} from "../proxy";
 
 console.log("PRE-FETCH.JS v" + new Date().toISOString().substr(11, 8));
 
