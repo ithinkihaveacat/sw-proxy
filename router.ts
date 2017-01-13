@@ -22,13 +22,16 @@ export class Router {
 
   private routes: [RegExp, any][];
 
-  constructor(routes: Route, prefix = "") {
+  constructor(routes: Route = {}, prefix = "") {
     this.routes = Object.keys(routes).map<[RegExp, any]>(r => {
       return [new RegExp(prefix + r), routes[r]];
     }, []);
   }
 
   public match(url: string): [any, RegExpMatchArray][] {
+    if (!url || !url.match) {
+      return [];
+    }
     return this.routes.reduce((acc: [any, RegExpMatchArray][], r) => {
       const m = url.match(r[0]);
       if (m) {

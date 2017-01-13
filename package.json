@@ -28,10 +28,11 @@
     "typescript": "^2.1.1"
   },
   "scripts": {
-    "preversion": "npm test",
+    "preversion": "yarn test",
     "prepublish": "tsc -p tsconfig.json --module commonjs --outDir dist/commonjs && tsc -p tsconfig.json --module es6 --outDir dist/es6",
     "postpublish": "git push && git push --tags",
-    "test": "# TODO",
+    "test": "yarn prepublish && mocha",
+    "mocha": "mocha",
     "examples": "cd examples ; for f in *.ts ; do rollup -c -i $f -o `basename $f .ts`.js ; done"
   }
 }
