@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/ithinkihaveacat/sw-proxy.svg?branch=master)](https://travis-ci.org/ithinkihaveacat/sw-proxy)
+
 # HTTP Proxy Proof-of-Concept
 
 *This is not an official Google product!*
