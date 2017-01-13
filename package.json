@@ -18,10 +18,11 @@
     "service-worker.d.ts"
   ],
   "repository": "ithinkihaveacat/sw-proxy",
-  "main": "dist/commonjs/http-proxy.js",
-  "jsnext:main": "dist/es6/http-proxy.js",
-  "types": "dist/commonjs/http-proxy.d.ts",
+  "main": "dist/commonjs/proxy.js",
+  "types": "dist/commonjs/proxy.d.ts",
+  "jsnext:main": "dist/es6/proxy.js",
   "devDependencies": {
+    "mocha": "^3.2.0",
     "rollup": "^0.36.4",
     "rollup-plugin-typescript": "^0.8.1",
     "typescript": "^2.1.1"
