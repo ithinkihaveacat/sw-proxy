@@ -28,11 +28,12 @@
     "typescript": "^2.1.1"
   },
   "scripts": {
-    "preversion": "yarn test",
-    "prepublish": "tsc -p tsconfig.json --module commonjs --outDir dist/commonjs && tsc -p tsconfig.json --module es6 --outDir dist/es6",
+    "preversion": "$npm_execpath test",
+    "prepare": "tsc -p tsconfig.json --module commonjs --outDir dist/commonjs && tsc -p tsconfig.json --module es6 --outDir dist/es6",
     "postpublish": "git push && git push --tags",
-    "test": "yarn prepublish && mocha",
+    "test": "$npm_execpath run prepare && mocha",
     "mocha": "mocha",
+    "printenv": "printenv",
     "examples": "cd examples ; for f in *.ts ; do rollup -c -i $f -o `basename $f .ts`.js ; done"
   }
 }
