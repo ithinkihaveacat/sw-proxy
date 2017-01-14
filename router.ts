@@ -12,15 +12,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. */
 
-/// <reference path="service-worker.d.ts"/>
-
 export interface Routes<T> {
   [k: string]: T;
 };
 
 export class Router<T> {
 
-  private routes: [RegExp, T][];
+  private routes: Array<[RegExp, T]>;
 
   constructor(routes: Routes<T> = {}, prefix = "") {
     this.routes = Object.keys(routes).map<[RegExp, T]>(r => {
@@ -28,11 +26,11 @@ export class Router<T> {
     }, []);
   }
 
-  public match(s: string): [T, RegExpMatchArray][] {
+  public match(s: string): Array<[T, RegExpMatchArray]> {
     if (!s || !s.match) {
       return [];
     }
-    return this.routes.reduce((acc: [T, RegExpMatchArray][], r) => {
+    return this.routes.reduce((acc: Array<[T, RegExpMatchArray]>, r) => {
       const m = s.match(r[0]);
       if (m) {
         acc.push([r[1], m]);
@@ -44,14 +42,14 @@ export class Router<T> {
   public loop(
     s: string,
     handler: (v: T, m: RegExpMatchArray, next: (() => void)) => void) {
-    function _loop(l: [T, RegExpMatchArray][]) {
+    function _loop(l: Array<[T, RegExpMatchArray]>) {
       return () => {
         if (l.length !== 0) {
           const next = _loop(l.slice(1));
           const [v, matches] = l[0];
           handler(v, matches, next);
         }
-      }
+      };
     }
     return _loop(this.match(s))();
   }
