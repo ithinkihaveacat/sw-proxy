@@ -2,4 +2,5 @@ language: node_js
 node_js:
   - "node"
   - "6"
+# Use npm on Travis for variety
 install: npm install
