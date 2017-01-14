@@ -457,3 +457,7 @@ export function skipWaitingAndClaim(scope: any) {
     event.waitUntil(scope.clients.claim());
   });
 }
+
+import {Router} from "./router";
+
+export {Router};
