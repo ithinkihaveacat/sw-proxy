@@ -33,6 +33,7 @@
     "prepare": "tsc -p tsconfig.json --module commonjs --outDir dist/commonjs && tsc -p tsconfig.json --module es6 --outDir dist/es6",
     "postpublish": "git push && git push --tags",
     "test": "$npm_execpath run prepare && $npm_execpath run lint && mocha",
+    "test:watch": "$npm_execpath run test -- -w",
     "lint": "tslint router.ts",
     "mocha": "mocha",
     "printenv": "printenv",
