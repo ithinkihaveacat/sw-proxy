@@ -14,31 +14,46 @@ limitations under the License. */
 
 /// <reference path="service-worker.d.ts"/>
 
-export interface Route {
-  [k: string]: any;
+export interface Routes<T> {
+  [k: string]: T;
 };
 
-export class Router {
+export class Router<T> {
 
-  private routes: [RegExp, any][];
+  private routes: [RegExp, T][];
 
-  constructor(routes: Route = {}, prefix = "") {
-    this.routes = Object.keys(routes).map<[RegExp, any]>(r => {
+  constructor(routes: Routes<T> = {}, prefix = "") {
+    this.routes = Object.keys(routes).map<[RegExp, T]>(r => {
       return [new RegExp(prefix + r), routes[r]];
     }, []);
   }
 
-  public match(url: string): [any, RegExpMatchArray][] {
-    if (!url || !url.match) {
+  public match(s: string): [T, RegExpMatchArray][] {
+    if (!s || !s.match) {
       return [];
     }
-    return this.routes.reduce((acc: [any, RegExpMatchArray][], r) => {
-      const m = url.match(r[0]);
+    return this.routes.reduce((acc: [T, RegExpMatchArray][], r) => {
+      const m = s.match(r[0]);
       if (m) {
         acc.push([r[1], m]);
       }
       return acc;
     }, []);
+  }
+
+  public loop(
+    s: string,
+    handler: (v: T, m: RegExpMatchArray, next: (() => void)) => void) {
+    function _loop(l: [T, RegExpMatchArray][]) {
+      return () => {
+        if (l.length !== 0) {
+          const next = _loop(l.slice(1));
+          const [v, matches] = l[0];
+          handler(v, matches, next);
+        }
+      }
+    }
+    return _loop(this.match(s))();
   }
 
 }

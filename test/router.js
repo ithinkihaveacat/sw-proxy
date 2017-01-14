@@ -3,7 +3,9 @@ const Router = require('../dist/commonjs/router.js').Router;
 const assert = require('assert');
 
 describe('Router', () => {
+
   describe('#constructor()', () => {
+
     it('should return a Router object (empty constructor)', () => {
       assert.ok(new Router() instanceof Router);
     });
@@ -14,7 +16,9 @@ describe('Router', () => {
       assert.ok(new Router({ 'foo': 'bar' }) instanceof Router);
     });
   });
+
   describe('#match()', () => {
+
     it('should return no matches (empty constructor, no URL)', () => {
       const r = new Router();
       assert.deepEqual(r.match(), []);
@@ -78,5 +82,42 @@ describe('Router', () => {
       assert.equal(m[0][0], 'bar');
       assert.equal(m[1][0], 'baz');
     });
+
+  });
+
+  describe('#loop()', () => {
+
+    it('should return a single match', () => {
+      const r = new Router({ 'foo': 'bar' });
+      r.loop('foo', (v) => {
+        assert.equal(v, 'bar');
+      });
+    });
+    it('should return two matches', () => {
+      const r = new Router({ 'foo': 'bar1', '.*': 'bar2' });
+      let count = 0;
+      r.loop('foo', (v, m, n) => {
+        switch (count) {
+          // First time through the value should be 'bar1' ...
+          case 0:
+            assert.equal(v, 'bar1');
+            break;
+          // ... and the second time (after next) the value should be 'bar2'
+          case 1:
+            assert.equal(v, 'bar2');
+            break;
+        }
+        count++;
+        n();
+      });
+    });
+    it('should match on regexp /foo-(\\d+)', () => {
+      const r = new Router({ '/foo-(\\d+)': 'bar' });
+      r.loop('/foo-333', (v, m) => {
+        assert.equal(v, 'bar');
+        assert.equal(m[1], '333');
+      });
+    });
+
   });
 });
