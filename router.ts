@@ -20,7 +20,7 @@ export class Router<T> {
 
   private routes: Array<[RegExp, T]>;
 
-  constructor(routes: Routes<T> = {}, prefix = '') {
+  constructor(routes: Routes<T> = {}, prefix = "") {
     this.routes = Object.keys(routes).map<[RegExp, T]>(r => {
       return [new RegExp(prefix + r), routes[r]];
     }, []);
