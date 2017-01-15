@@ -23,7 +23,7 @@
   "jsnext:main": "dist/es6/proxy.js",
   "devDependencies": {
     "mocha": "^3.2.0",
-    "rollup": "^0.36.4",
+    "rollup": "^0.41.4",
     "rollup-plugin-typescript": "^0.8.1",
     "tslint": "^4.3.1",
     "typescript": "^2.1.1"
