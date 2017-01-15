@@ -102,7 +102,7 @@ describe('Router', () => {
           case 0:
             assert.equal(v, 'bar1');
             break;
-          // ... and the second time (after next) the value should be 'bar2'
+          // ... and the second time (after n()) the value should be 'bar2'
           case 1:
             assert.equal(v, 'bar2');
             break;
