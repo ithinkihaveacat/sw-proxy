@@ -16,16 +16,46 @@ export interface Routes<T> {
   [k: string]: T;
 };
 
+/**
+ * Described as a "Router", and is designed to match URLs, but at its core, all
+ * this really does is: (1) takes a list of of regular expressions (and an
+ * associated paired values); and (2) when passed a string, match it against the
+ * regular expressions, and return a list of the values.
+ *
+ * @export
+ * @class Router
+ * @template T type of the value returned when regexp matched
+ */
 export class Router<T> {
 
   private routes: Array<[RegExp, T]>;
 
+  /**
+   * Creates an instance of Router:
+   *
+   * const r = new Router<String>({ 'foo': 'bar' });
+   *
+   * @param {Routes<T>} [routes={}]
+   * @param {string} [prefix=""]
+   *
+   * @memberOf Router
+   */
   constructor(routes: Routes<T> = {}, prefix = "") {
     this.routes = Object.keys(routes).map<[RegExp, T]>(r => {
       return [new RegExp(prefix + r), routes[r]];
     }, []);
   }
 
+  /**
+   * Matches `s` against the stored regexps. For each match, returns the
+   * corresponding value together with the regexp match array (which includes
+   * the capturing groups).
+   *
+   * @param {string} s string to match against regexps
+   * @returns {Array<[T, RegExpMatchArray]>}
+   *
+   * @memberOf Router
+   */
   public match(s: string): Array<[T, RegExpMatchArray]> {
     if (!s || !s.match) {
       return [];
@@ -39,6 +69,21 @@ export class Router<T> {
     }, []);
   }
 
+  /**
+   * Use `match()` if possible; `loop()` is needed if you have a more
+   * complicated matching problem, such as the need to replicate [Express's
+   * `next()`](https://expressjs.com/en/guide/routing.html) method or similar.
+   *
+   * Instead of returning a list of matches, this passes the first match to the
+   * passed `handler` function, as well as a `next` function that can be called
+   * to continue the loop.
+   *
+   * @param {string} s string to match against regexps
+   * @param {(v: T, m: RegExpMatchArray, next: (() => void)) => void} handler
+   * @returns void
+   *
+   * @memberOf Router
+   */
   public loop(
     s: string,
     handler: (v: T, m: RegExpMatchArray, next: (() => void)) => void) {
