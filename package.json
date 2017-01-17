@@ -34,7 +34,7 @@
     "postpublish": "git push && git push --tags",
     "test": "$npm_execpath run prepare && $npm_execpath run lint && mocha",
     "test:watch": "$npm_execpath run test -- -w",
-    "lint": "tslint router.ts",
+    "lint": "tslint router.ts proxy.ts",
     "mocha": "mocha",
     "printenv": "printenv",
     "examples": "cd examples ; for f in *.ts ; do rollup -c -i $f -o `basename $f .ts`.js ; done"

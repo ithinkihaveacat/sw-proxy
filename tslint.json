@@ -4,6 +4,7 @@
   "rules": {
     // "object-literal-sort-keys": false
     "arrow-parens": false,
-    "interface-name": [false]
+    "interface-name": [false],
+    "trailing-comma": [true, {"multiline": "never", "singleline": "never"}]
   }
 }
