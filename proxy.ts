@@ -33,10 +33,10 @@ function now() {
  */
 function parseHeader(header: string): { [k: string]: string } {
   return !header.trim() ? {} : header.trim().split(/\s*,\s*/).sort().reduce(
-    (p: { [k: string]: string }, c: string) => {
-      let t = c.split(/\s*=\s*/, 2);
-      p[t[0].toLowerCase()] = t[1];
-      return p;
+    (acc: { [k: string]: string }, s: string) => {
+      let t = s.split(/\s*=\s*/, 2);
+      acc[t[0].toLowerCase()] = t[1];
+      return acc;
     },
     {}
   );
@@ -458,3 +458,8 @@ export function skipWaitingAndClaim(scope: any) {
 import {Router} from "./router";
 
 export {Router};
+
+export {
+  staleMatch as _staleMatch,
+  parseHeader as _parseHeader
+};

@@ -30,7 +30,7 @@
   },
   "scripts": {
     "preversion": "$npm_execpath test",
-    "prepare": "tsc -p tsconfig.json --module commonjs --outDir dist/commonjs && tsc -p tsconfig.json --module es6 --outDir dist/es6",
+    "prepare": "tsc -p tsconfig.json --module commonjs --outDir dist/commonjs && touch dist/commonjs/service-worker.js && tsc -p tsconfig.json --module es6 --outDir dist/es6 && touch dist/es6/service-worker.js",
     "postpublish": "git push && git push --tags",
     "test": "$npm_execpath run prepare && $npm_execpath run lint && mocha",
     "test:watch": "$npm_execpath run test -- -w",
