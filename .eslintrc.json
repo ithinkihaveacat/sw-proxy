@@ -1,5 +1,9 @@
 {
+  "extends": "google",
   "installedESLint": true,
+  "rules": {
+    "padded-blocks": 0
+  },
   "env": {
     "es6": true
   }

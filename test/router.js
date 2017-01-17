@@ -13,7 +13,7 @@ describe('Router', () => {
       assert.ok(new Router({}) instanceof Router);
     });
     it('should return a Router object (one route)', () => {
-      assert.ok(new Router({ 'foo': 'bar' }) instanceof Router);
+      assert.ok(new Router({'foo': 'bar'}) instanceof Router);
     });
   });
 
@@ -28,7 +28,7 @@ describe('Router', () => {
       assert.deepEqual(r.match(), []);
     });
     it('should return no matches (one route, no URL)', () => {
-      const r = new Router({ 'foo': 'bar' });
+      const r = new Router({'foo': 'bar'});
       assert.deepEqual(r.match(), []);
     });
     it('should return no matches (no routes, URL)', () => {
@@ -36,22 +36,22 @@ describe('Router', () => {
       assert.deepEqual(r.match('qqq'), []);
     });
     it('should return no matches (one route, URL)', () => {
-      const r = new Router({ 'foo': 'bar' });
+      const r = new Router({'foo': 'bar'});
       assert.deepEqual(r.match('qqq'), []);
     });
     it('should return one match (one route, URL)', () => {
-      const r = new Router({ 'foo': 'bar' });
+      const r = new Router({'foo': 'bar'});
       assert.deepEqual(
         r.match('foo'),
         [['bar', 'foo'.match(new RegExp('foo'))]]
       );
     });
     it('should support prefix', () => {
-      const r = new Router({ '/foo': 'bar' }, '/quux');
+      const r = new Router({'/foo': 'bar'}, '/quux');
       assert.equal(r.match('/quux/foo').length, 1);
     });
     it('should match on regexp /foo/(.*)', () => {
-      const r = new Router({ '/foo/(.*)': 'bar' });
+      const r = new Router({'/foo/(.*)': 'bar'});
       const m = r.match('/foo/43');
       assert.equal(m.length, 1);
       assert.equal(m[0][0], 'bar');
@@ -59,7 +59,7 @@ describe('Router', () => {
       assert.equal(m[0][1][1], '43');
     });
     it('should match on regexp /foo/quux-(.*)/(\\d+)', () => {
-      const r = new Router({ '/foo/quux-(.*)/(\\d+)': 'bar' });
+      const r = new Router({'/foo/quux-(.*)/(\\d+)': 'bar'});
       const m = r.match('/foo/quux-clem/54');
       assert.equal(m.length, 1);
       assert.equal(m[0][0], 'bar');
@@ -67,7 +67,7 @@ describe('Router', () => {
       assert.equal(m[0][1][2], '54'); // second capture
     });
     it('should return a single match', () => {
-      const r = new Router({ 'foo1': 'bar1', 'foo2': 'bar2' });
+      const r = new Router({'foo1': 'bar1', 'foo2': 'bar2'});
       const m1 = r.match('foo1');
       assert.equal(m1.length, 1);
       assert.equal(m1[0][0], 'bar1');
@@ -76,7 +76,7 @@ describe('Router', () => {
       assert.equal(m2[0][0], 'bar2');
     });
     it('should return two matches', () => {
-      const r = new Router({ 'foo': 'bar', '.*': 'baz' });
+      const r = new Router({'foo': 'bar', '.*': 'baz'});
       const m = r.match('foo');
       assert.equal(m.length, 2);
       assert.equal(m[0][0], 'bar');
@@ -88,13 +88,13 @@ describe('Router', () => {
   describe('#loop()', () => {
 
     it('should return a single match', () => {
-      const r = new Router({ 'foo': 'bar' });
+      const r = new Router({'foo': 'bar'});
       r.loop('foo', (v) => {
         assert.equal(v, 'bar');
       });
     });
     it('should return two matches', () => {
-      const r = new Router({ 'foo': 'bar1', '.*': 'bar2' });
+      const r = new Router({'foo': 'bar1', '.*': 'bar2'});
       let count = 0;
       r.loop('foo', (v, m, n) => {
         switch (count) {
@@ -112,7 +112,7 @@ describe('Router', () => {
       });
     });
     it('should match on regexp /foo-(\\d+)', () => {
-      const r = new Router({ '/foo-(\\d+)': 'bar' });
+      const r = new Router({'/foo-(\\d+)': 'bar'});
       r.loop('/foo-333', (v, m) => {
         assert.equal(v, 'bar');
         assert.equal(m[1], '333');
