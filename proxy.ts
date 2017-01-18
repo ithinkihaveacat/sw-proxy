@@ -98,6 +98,8 @@ function freshMatch(res: Response, req: Request) {
 
     if ("no-cache" in h) {
       return false;
+    } else if ("no-store" in h) {
+      return false;
     } else if ("max-age" in h) {
       return (parseInt(h["max-age"], 10) * 1000) <= age(res);
     } else if ("min-fresh" in h) {
@@ -184,8 +186,8 @@ function errorMatch(res: Response) {
 // **false**.
 function cacheSufficient(req: Request) {
   return !req.headers.has("cache-control") ||
-    (req.headers.get("cache-control").indexOf("no-cache") === -1) ||
-    !("no-cache" in parseHeader(req.headers.get("cache-control")));
+    (req.headers.get("cache-control").indexOf("no-store") === -1) ||
+    !("no-store" in parseHeader(req.headers.get("cache-control")));
 }
 
 // Returns **true** if the client requires a cached response, otherwise
@@ -196,12 +198,22 @@ function cacheNecessary(req: Request) {
     ("only-if-cached" in parseHeader(req.headers.get("cache-control")));
 }
 
+function canCache(res: Response) {
+  const statusOk = res.status === 200;
+  const hasCacheControl = res.headers.has("cache-control");
+  const allowsCaching = () => {
+    const h = parseHeader(res.headers.get("cache-control"));
+    return (("public" in h) || ("private" in h)) && !("no-store" in h);
+  };
+  return statusOk && hasCacheControl && allowsCaching();
+}
+
 // Takes a `Response` and (optionally) a function for transforming headers
 // (`Headers` → `Headers`). Returns a new `Response`.
 
 /**
  * @param  {Response} res
- * @param  {function} headerFn passed mutatable `Headers`
+ * @param  {(h: Headers) => void} headerFn passed mutatable `Headers`
  * @return {Promise<Response>}
  */
 export function newResponse(res: Response, headerFn?: (h: Headers) => void) {
@@ -235,7 +247,7 @@ export function newResponse(res: Response, headerFn?: (h: Headers) => void) {
 
 /**
  * @param  {Request} req
- * @param  {function} headerFn passed mutable `Headers`
+ * @param  {(h: Headers) => void} headerFn passed mutable `Headers`
  * @return {Promise<Request>}
  */
 export function newRequest(req: Request, headerFn?: (h: Headers) => void) {
@@ -319,14 +331,8 @@ export class Proxy {
     // Fetch `req` and transform `Response`.
     return fetch(req).then(resFn).then((res: Response) => {
 
-      function canCache() {
-        return (res.status === 200) &&
-          res.headers.has("cache-control") &&
-          !("no-store" in parseHeader(res.headers.get("cache-control")));
-      }
-
       // If the `Response` allows caching, save it.
-      if (canCache()) {
+      if (canCache(res)) {
         if (!res.headers.has("date")) {
           console.warn(req.url, "MISSING DATE HEADER");
         }
@@ -456,10 +462,10 @@ export function skipWaitingAndClaim(scope: any) {
 }
 
 import {Router} from "./router";
-
 export {Router};
 
+// Export private functions for tests
 export {
-  staleMatch as _staleMatch,
+  canCache as _canCache,
   parseHeader as _parseHeader
 };
