@@ -199,13 +199,10 @@ function cacheNecessary(req: Request) {
 }
 
 function canCache(res: Response) {
-  const statusOk = res.status === 200;
-  const hasCacheControl = res.headers.has("cache-control");
-  const allowsCaching = () => {
-    const h = parseHeader(res.headers.get("cache-control"));
-    return (("public" in h) || ("private" in h)) && !("no-store" in h);
-  };
-  return statusOk && hasCacheControl && allowsCaching();
+  const h = parseHeader(res.headers.get("cache-control") || "");
+  return res.status === 200
+    && !("no-store" in h)
+    && (("max-age" in h) || ("s-maxage" in h));
 }
 
 // Takes a `Response` and (optionally) a function for transforming headers

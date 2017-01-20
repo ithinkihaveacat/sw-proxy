@@ -42,11 +42,12 @@ describe('Proxy', () => {
 
     [
       [{ }, false],
-      [{'cache-control': 'public'}, true],
+      [{'cache-control': 'public'}, false],
+      [{'cache-control': 'max-age=7'}, true],
       [{'cache-control': 's-maxage=7773, public, foo=bar'}, true],
       [{'cache-control': 'no-store, foo=bar'}, false],
       [{'cache-control': 's-maxage=7773, private, foo=bar'}, true],
-      [{'cache-control': 's-maxage=7773, qqq=public, foo=bar'}, false],
+      [{'cache-control': 's-maxage=7773, qqq=public, foo=bar'}, true],
       [{'cache-control': 'qqq=public, foo=bar'}, false],
       [{
         'expires': 'Tue, 17 Jan 2012 00:49:02 GMT',
