@@ -20,7 +20,7 @@ export interface Routes<T> {
  * Described as a "Router", and is designed to match URLs, but at its core, all
  * this really does is: (1) takes a list of of regular expressions (and an
  * associated paired values); and (2) when passed a string, match it against the
- * regular expressions, and return a list of the values.
+ * regular expressions, and return a list of the matching values.
  *
  * @export
  * @class Router
