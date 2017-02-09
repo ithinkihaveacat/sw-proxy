@@ -14,13 +14,13 @@ limitations under the License. */
 
 /* eslint-env serviceworker, browser */
 
-import {skipWaitingAndClaim,newResponse,Proxy} from "../proxy";
+import {newResponse, Proxy, skipWaitingAndClaim} from "../proxy";
 
-var CACHE = "MYCACHE";
+let CACHE = "MYCACHE";
 
 skipWaitingAndClaim(self);
 
-self.addEventListener('fetch', function (event: FetchEvent) {
+self.addEventListener("fetch", function (event: FetchEvent) {
 
   // Function to transform responses
   function resFn(req: Request, res: Response) {
@@ -32,7 +32,7 @@ self.addEventListener('fetch', function (event: FetchEvent) {
     });
   }
 
-  var proxy = new Proxy(CACHE, null, resFn);
+  let proxy = new Proxy(CACHE, null, resFn);
 
   event.respondWith(proxy.fetch(event.request));
 

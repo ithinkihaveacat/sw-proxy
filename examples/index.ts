@@ -14,7 +14,7 @@ limitations under the License. */
 
 /* eslint-env serviceworker, browser */
 
-import {newResponse, newRequest, skipWaitingAndClaim, Proxy} from "../proxy";
+import {newRequest, newResponse, Proxy, skipWaitingAndClaim} from "../proxy";
 
 importScripts("http-proxy.js");
 
@@ -35,7 +35,7 @@ function deleteAllCaches() {
 
 // ### "install"
 
-self.addEventListener('install', function (event: ExtendableEvent) {
+self.addEventListener("install", function (event: ExtendableEvent) {
   console.log("INSTALLING" + new Date().toISOString().substr(11, 8));
   event.waitUntil(deleteAllCaches());
 });

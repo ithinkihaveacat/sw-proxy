@@ -5,6 +5,7 @@
     // "object-literal-sort-keys": false
     "arrow-parens": false,
     "interface-name": [false],
+    "no-console": [false],
     "trailing-comma": [true, {"multiline": "never", "singleline": "never"}]
   }
 }

@@ -28,13 +28,13 @@ limitations under the License. */
 /* exported registerReady */
 function registerReady(script: string, options: any) {
 
-  if (!('serviceWorker' in navigator)) {
+  if (!("serviceWorker" in navigator)) {
     return;
   }
 
   return navigator.serviceWorker.register(script, options).then(function (r) {
 
-    var incoming = r.installing || r.waiting;
+    let incoming = r.installing || r.waiting;
     if (r.active && !incoming) {
       return r;
     }
@@ -45,7 +45,7 @@ function registerReady(script: string, options: any) {
           incoming!.onstatechange = null;
           resolve(r);
         }
-      }
+      };
     });
 
   });

@@ -14,18 +14,18 @@ limitations under the License. */
 
 /* eslint-env serviceworker, browser */
 
-import {skipWaitingAndClaim,newResponse,Proxy} from "../proxy";
+import {newResponse, Proxy, skipWaitingAndClaim} from "../proxy";
 
-var CACHE = "MYCACHE";
+let CACHE = "MYCACHE";
 
 // The response for `/quote.txt`.
 function getEntries(): { [k: string]: Response } {
-  var body = [
+  let body = [
     "The great roe is a mythological beast with the head",
     "of a lion and the body of a lion, though not the same",
     "lion."
   ].join(" ");
-  var res = new Response(body, {
+  let res = new Response(body, {
     status: 200,
     statusText: "OK",
     headers: {
@@ -42,11 +42,11 @@ function getEntries(): { [k: string]: Response } {
 skipWaitingAndClaim(self);
 
 // On "install", inject responses into cache.
-self.addEventListener('install', function (event: ExtendableEvent) {
-  var entries = getEntries();
+self.addEventListener("install", function (event: ExtendableEvent) {
+  let entries = getEntries();
   event.waitUntil(
     caches.open(CACHE).then(function (cache) {
-      return Promise.all(Object.keys(entries).reduce(function (acc: Promise<void>[], url: string) {
+      return Promise.all(Object.keys(entries).reduce(function (acc: Array<Promise<void>>, url: string) {
         acc.push(cache.put(url, entries[url]));
         return acc;
       }, []));
@@ -54,7 +54,7 @@ self.addEventListener('install', function (event: ExtendableEvent) {
   );
 });
 
-self.addEventListener('fetch', function (event: FetchEvent) {
-  var proxy = new Proxy(CACHE);
+self.addEventListener("fetch", function (event: FetchEvent) {
+  let proxy = new Proxy(CACHE);
   event.respondWith(proxy.fetch(event.request));
 });

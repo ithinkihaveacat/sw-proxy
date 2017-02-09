@@ -12,13 +12,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. */
 
-import {skipWaitingAndClaim,newResponse,Proxy} from "../proxy";
+import {newResponse, Proxy, skipWaitingAndClaim} from "../proxy";
 
-var CACHE = "MYCACHE";
+let CACHE = "MYCACHE";
 
 skipWaitingAndClaim(self);
 
-self.addEventListener('fetch', function (event: FetchEvent) {
+self.addEventListener("fetch", function (event: FetchEvent) {
 
   console.log("FETCH EVENT", event.request.url);
 
@@ -38,7 +38,7 @@ self.addEventListener('fetch', function (event: FetchEvent) {
   }
 
   // Configure the proxy
-  var proxy = new Proxy(CACHE, null, resFn);
+  let proxy = new Proxy(CACHE, null, resFn);
 
   event.respondWith(proxy.fetch(event.request));
 

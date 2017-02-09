@@ -14,9 +14,9 @@ limitations under the License. */
 
 /* eslint-env serviceworker, browser */
 
-import {skipWaitingAndClaim,newResponse,Proxy} from "../proxy";
+import {newResponse, Proxy, skipWaitingAndClaim} from "../proxy";
 
-var CACHE = "MYCACHE";
+let CACHE = "MYCACHE";
 
 skipWaitingAndClaim(self);
 
@@ -43,12 +43,12 @@ function getProxy() {
 }
 
 // Load (and cache) the images when the service worker is installed.
-self.addEventListener('install', function (event: InstallEvent) {
+self.addEventListener("install", function (event: InstallEvent) {
 
   // We're not handling the "fetch" event yet, so we need to pass requests
   // through the proxy "manually" (rather than just doing a `fetch()`), and
   // having that fire the `fetch` event.
-  var proxy = getProxy();
+  let proxy = getProxy();
 
   event.waitUntil(
     // Resolve when all images are loaded.
@@ -62,11 +62,11 @@ self.addEventListener('install', function (event: InstallEvent) {
 
 });
 
-self.addEventListener('fetch', function (event: FetchEvent) {
+self.addEventListener("fetch", function (event: FetchEvent) {
 
   console.log("FETCH EVENT", event.request.url);
 
-  var proxy = getProxy();
+  let proxy = getProxy();
 
   event.respondWith(proxy.fetch(event.request));
 
