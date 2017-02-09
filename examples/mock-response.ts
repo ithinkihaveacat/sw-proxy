@@ -26,13 +26,13 @@ function getEntries(): { [k: string]: Response } {
     "lion."
   ].join(" ");
   let res = new Response(body, {
-    status: 200,
-    statusText: "OK",
     headers: {
       "cache-control": "max-age=86400",
       "content-type": "text/plain",
       "date": new Date().toUTCString()
-    }
+    },
+    status: 200,
+    statusText: "OK"
   });
   return {
     "/quote.txt": res
@@ -42,11 +42,11 @@ function getEntries(): { [k: string]: Response } {
 skipWaitingAndClaim(self);
 
 // On "install", inject responses into cache.
-self.addEventListener("install", function (event: ExtendableEvent) {
+self.addEventListener("install", (event: ExtendableEvent) => {
   let entries = getEntries();
   event.waitUntil(
-    caches.open(CACHE).then(function (cache) {
-      return Promise.all(Object.keys(entries).reduce(function (acc: Array<Promise<void>>, url: string) {
+    caches.open(CACHE).then((cache) => {
+      return Promise.all(Object.keys(entries).reduce((acc: Array<Promise<void>>, url: string) => {
         acc.push(cache.put(url, entries[url]));
         return acc;
       }, []));
@@ -54,7 +54,7 @@ self.addEventListener("install", function (event: ExtendableEvent) {
   );
 });
 
-self.addEventListener("fetch", function (event: FetchEvent) {
+self.addEventListener("fetch", (event: FetchEvent) => {
   let proxy = new Proxy(CACHE);
   event.respondWith(proxy.fetch(event.request));
 });

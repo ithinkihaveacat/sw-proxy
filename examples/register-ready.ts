@@ -15,6 +15,7 @@ limitations under the License. */
 /* eslint-env serviceworker, browser */
 
 // Returns a `Promise<ServiceWorkerRegistration>` like
+/* tslint:disable-next-line:max-line-length */
 // [ServiceWorkerContainer.register()](https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerContainer/register),
 // except that when it resolves, `script`'s service worker is active and
 // controlling the page.
@@ -32,15 +33,15 @@ function registerReady(script: string, options: any) {
     return;
   }
 
-  return navigator.serviceWorker.register(script, options).then(function (r) {
+  return navigator.serviceWorker.register(script, options).then((r) => {
 
     let incoming = r.installing || r.waiting;
     if (r.active && !incoming) {
       return r;
     }
 
-    return new Promise(function (resolve) {
-      incoming!.onstatechange = function (e) {
+    return new Promise((resolve) => {
+      incoming!.onstatechange = (e) => {
         if ((e.target as ServiceWorker).state === "activated") {
           incoming!.onstatechange = null;
           resolve(r);

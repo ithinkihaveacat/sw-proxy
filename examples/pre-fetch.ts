@@ -26,7 +26,7 @@ function getProxy() {
     function resFn(req: Request, res: Response): Promise<Response> {
       // Only transform JPGs
       if (req.url.match("jpg$")) {
-        return newResponse(res, function (headers) {
+        return newResponse(res, (headers) => {
           // Cache responses for a week
           headers.set("cache-control", "max-age=86000");
           headers.set("date", new Date().toUTCString());
@@ -43,7 +43,7 @@ function getProxy() {
 }
 
 // Load (and cache) the images when the service worker is installed.
-self.addEventListener("install", function (event: InstallEvent) {
+self.addEventListener("install", (event: InstallEvent) => {
 
   // We're not handling the "fetch" event yet, so we need to pass requests
   // through the proxy "manually" (rather than just doing a `fetch()`), and
@@ -62,7 +62,7 @@ self.addEventListener("install", function (event: InstallEvent) {
 
 });
 
-self.addEventListener("fetch", function (event: FetchEvent) {
+self.addEventListener("fetch", (event: FetchEvent) => {
 
   console.log("FETCH EVENT", event.request.url);
 

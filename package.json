@@ -24,6 +24,7 @@
   "devDependencies": {
     "eslint": "^3.13.1",
     "eslint-config-google": "^0.7.1",
+    "http-server": "^0.9.0",
     "mocha": "^3.2.0",
     "node-fetch": "^1.6.3",
     "rollup": "^0.41.4",
@@ -37,9 +38,10 @@
     "postpublish": "git push && git push --tags",
     "test": "$npm_execpath run prepare && $npm_execpath run lint && mocha",
     "test:watch": "$npm_execpath run test -- -w",
-    "lint": "eslint test/*.js && tslint router.ts proxy.ts",
+    "lint": "eslint test/*.js && tslint router.ts proxy.ts examples/*.ts",
     "mocha": "mocha",
     "printenv": "printenv",
-    "examples": "cd examples ; for f in *.ts ; do rollup -c -i $f -o `basename $f .ts`.js ; done"
+    "examples": "cd examples ; for f in *.ts ; do rollup -c -i $f -o `basename $f .ts`.js ; done",
+    "start": "$npm_execpath run examples && http-server -a localhost examples -c-1"
   }
 }

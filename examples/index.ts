@@ -19,10 +19,10 @@ import {newRequest, newResponse, Proxy, skipWaitingAndClaim} from "../proxy";
 importScripts("http-proxy.js");
 
 function deleteAllCaches() {
-  return caches.keys().then(function (cacheNames) {
+  return caches.keys().then((cacheNames) => {
     return Promise.all(
-      cacheNames.map(function (cacheName) {
-        return caches.delete(cacheName).then(function () {
+      cacheNames.map((cacheName) => {
+        return caches.delete(cacheName).then(() => {
           console.log("DELETED CACHE", cacheName);
           return true;
         });
@@ -35,7 +35,7 @@ function deleteAllCaches() {
 
 // ### "install"
 
-self.addEventListener("install", function (event: ExtendableEvent) {
+self.addEventListener("install", (event: ExtendableEvent) => {
   console.log("INSTALLING" + new Date().toISOString().substr(11, 8));
   event.waitUntil(deleteAllCaches());
 });

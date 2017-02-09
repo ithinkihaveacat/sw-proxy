@@ -14,10 +14,10 @@ limitations under the License. */
 
 /* eslint-env serviceworker, browser */
 
-self.addEventListener("install", function () {
+self.addEventListener("install", () => {
   skipWaiting();
 });
 
-self.addEventListener("activate", function (event: ActivateEvent) {
+self.addEventListener("activate", (event: ActivateEvent) => {
   event.waitUntil(clients.claim());
 });

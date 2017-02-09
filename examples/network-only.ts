@@ -20,13 +20,13 @@ let CACHE = "MYCACHE";
 
 skipWaitingAndClaim(self);
 
-self.addEventListener("fetch", function (event: FetchEvent) {
+self.addEventListener("fetch", (event: FetchEvent) => {
 
   // Function to transform requests
   function reqFn(req: Request) {
-    return newRequest(req, function (headers) {
+    return newRequest(req, (headers) => {
       // Don't use the cache, ever
-      headers.set("cache-control", "no-cache");
+      headers.set("cache-control", "no-store");
       headers.set("x-strategy", "network-only");
       return headers;
     });

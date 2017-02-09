@@ -20,11 +20,11 @@ let CACHE = "MYCACHE";
 
 skipWaitingAndClaim(self);
 
-self.addEventListener("fetch", function (event: FetchEvent) {
+self.addEventListener("fetch", (event: FetchEvent) => {
 
   // Function to transform responses
   function resFn(req: Request, res: Response) {
-    return newResponse(res, function (headers) {
+    return newResponse(res, (headers) => {
       // Set cache-control header
       headers.set("cache-control", "max-age=30, stale-if-error=30");
       headers.set("date", new Date().toUTCString());

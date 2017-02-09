@@ -20,13 +20,13 @@ let CACHE = "MYCACHE";
 
 skipWaitingAndClaim(self);
 
-self.addEventListener("fetch", function (event: FetchEvent) {
+self.addEventListener("fetch", (event: FetchEvent) => {
 
   // Function to transform responses
   function resFn(req: Request, res: Response) {
     // Only transform JPGs
     if (req.url.match("jpg$")) {
-      return newResponse(res, function (headers) {
+      return newResponse(res, (headers) => {
         // Set cache-control header
         headers.set("cache-control", "max-age=10, stale-while-revalidate=50");
         headers.set("date", new Date().toUTCString());
