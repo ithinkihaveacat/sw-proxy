@@ -50,4 +50,4 @@ import "../service-worker";
 
   });
 
-}
+};
