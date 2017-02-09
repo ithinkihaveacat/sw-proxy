@@ -43,7 +43,7 @@
     "mocha": "mocha",
     "printenv": "printenv",
     "examples:build": "cd examples ; for f in *.ts ; do rollup -c -f es -i $f -o `basename $f .ts`.js ; done",
-    "examples:docs": "docco -o examples/docs examples/*.js",
+    "examples:docs": "docco -o examples/docs examples/*.ts",
     "start": "$npm_execpath run examples:build && $npm_execpath run examples:docs && http-server -a localhost examples -c-1"
   }
 }
