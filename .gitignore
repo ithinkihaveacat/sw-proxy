@@ -2,4 +2,4 @@
 !test/*.js
 node_modules
 dist
-docs
+examples/docs

@@ -22,6 +22,7 @@
   "types": "dist/commonjs/proxy.d.ts",
   "jsnext:main": "dist/es6/proxy.js",
   "devDependencies": {
+    "docco": "^0.7.0",
     "eslint": "^3.13.1",
     "eslint-config-google": "^0.7.1",
     "http-server": "^0.9.0",
@@ -41,7 +42,8 @@
     "lint": "eslint test/*.js && tslint router.ts proxy.ts examples/*.ts",
     "mocha": "mocha",
     "printenv": "printenv",
-    "examples": "cd examples ; for f in *.ts ; do rollup -c -i $f -o `basename $f .ts`.js ; done",
-    "start": "$npm_execpath run examples && http-server -a localhost examples -c-1"
+    "examples:build": "cd examples ; for f in *.ts ; do rollup -c -f es -i $f -o `basename $f .ts`.js ; done",
+    "examples:docs": "docco -o examples/docs examples/*.js",
+    "start": "$npm_execpath run examples:build && $npm_execpath run examples:docs && http-server -a localhost examples -c-1"
   }
 }
