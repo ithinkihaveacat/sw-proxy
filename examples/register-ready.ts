@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. */
 
-/* eslint-env serviceworker, browser */
+import "../service-worker";
 
 // Returns a `Promise<ServiceWorkerRegistration>` like
 /* tslint:disable-next-line:max-line-length */
@@ -26,9 +26,8 @@ limitations under the License. */
 //
 // There's [a proposal](https://github.com/slightlyoff/ServiceWorker/issues/770)
 // to make something similar part of the service worker spec.
-/* exported registerReady */
-function registerReady(script: string, options: any) {
-
+// tslint:disable-next-line:no-string-literal
+(window as any)["registerReady"] = (script: string, options: any) => {
   if (!("serviceWorker" in navigator)) {
     return;
   }

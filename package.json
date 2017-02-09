@@ -40,9 +40,8 @@
     "test": "$npm_execpath run prepare && $npm_execpath run lint && mocha",
     "test:watch": "$npm_execpath run test -- -w",
     "lint": "eslint test/*.js && tslint router.ts proxy.ts examples/*.ts",
-    "mocha": "mocha",
     "printenv": "printenv",
-    "examples:build": "cd examples ; for f in *.ts ; do rollup -c -f es -i $f -o `basename $f .ts`.js ; done",
+    "examples:build": "cd examples ; for f in *.ts ; do rollup -c -f iife -i $f -o `basename $f .ts`.js ; done",
     "examples:docs": "docco -o examples/docs examples/*.ts",
     "start": "$npm_execpath run examples:build && $npm_execpath run examples:docs && http-server -a localhost examples -c-1"
   }

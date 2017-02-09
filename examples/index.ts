@@ -16,8 +16,6 @@ limitations under the License. */
 
 import {newRequest, newResponse, Proxy, skipWaitingAndClaim} from "../proxy";
 
-importScripts("http-proxy.js");
-
 function deleteAllCaches() {
   return caches.keys().then((cacheNames) => {
     return Promise.all(
@@ -36,7 +34,7 @@ function deleteAllCaches() {
 // ### "install"
 
 self.addEventListener("install", (event: ExtendableEvent) => {
-  console.log("INSTALLING" + new Date().toISOString().substr(11, 8));
+  console.log("INSTALLING " + new Date().toISOString().substr(11, 8));
   event.waitUntil(deleteAllCaches());
 });
 
