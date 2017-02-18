@@ -12,8 +12,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. */
 
-import "../service-worker";
-
 // Returns a `Promise<ServiceWorkerRegistration>` like
 /* tslint:disable-next-line:max-line-length */
 // [ServiceWorkerContainer.register()](https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerContainer/register),
