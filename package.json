@@ -14,8 +14,7 @@
   "license": "Apache-2.0",
   "author": "Michael Stillwell <mjs@beebo.org> (https://beebo.org/)",
   "files": [
-    "dist",
-    "service-worker.d.ts"
+    "dist"
   ],
   "repository": "ithinkihaveacat/sw-proxy",
   "main": "dist/commonjs/proxy.js",
@@ -35,7 +34,7 @@
   },
   "scripts": {
     "preversion": "$npm_execpath test",
-    "prepare": "tsc -p tsconfig.json --module commonjs --outDir dist/commonjs && touch dist/commonjs/service-worker.js && tsc -p tsconfig.json --module es6 --outDir dist/es6 && touch dist/es6/service-worker.js",
+    "prepare": "tsc -p tsconfig.json --module commonjs --outDir dist/commonjs && tsc -p tsconfig.json --module es6 --outDir dist/es6",
     "postpublish": "git push && git push --tags",
     "test": "$npm_execpath run prepare && $npm_execpath run lint && mocha",
     "test:watch": "$npm_execpath run test -- -w",
