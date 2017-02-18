@@ -15,8 +15,6 @@ limitations under the License. */
 // There doesn't seem to be an authoritative source of service worker
 // definitions; reference these hand-written definitions for now.
 
-import "./service-worker";
-
 function now() {
   return new Date().getTime();
 }
@@ -48,7 +46,7 @@ function age(res: Response) {
     console.warn("NO DATE");
     return 0;
   }
-  return now() - Date.parse(res.headers.get("date"));
+  return now() - Date.parse(res.headers.get("date")!);
 }
 
 // Returns number of milliseconds until the resource expires. This number will
@@ -56,7 +54,7 @@ function age(res: Response) {
 function expires(res: Response) {
 
   if (res.headers.has("cache-control")) {
-    const h = parseHeader(res.headers.get("cache-control"));
+    const h = parseHeader(res.headers.get("cache-control")!);
     if ("s-maxage" in h) {
       return (parseInt(h["s-maxage"], 10) * 1000) - age(res);
     } else if ("max-age" in h) {
@@ -77,7 +75,7 @@ function freshMatch(res: Response, req: Request) {
       return false;
     }
 
-    const h = parseHeader(res.headers.get("cache-control"));
+    const h = parseHeader(res.headers.get("cache-control")!);
 
     if ("s-maxage" in h) {
       return (parseInt(h["s-maxage"], 10) * 1000) > age(res);
@@ -94,7 +92,7 @@ function freshMatch(res: Response, req: Request) {
       return true;
     }
 
-    const h = parseHeader(req.headers.get("cache-control"));
+    const h = parseHeader(req.headers.get("cache-control")!);
 
     if ("no-cache" in h) {
       return false;
@@ -123,7 +121,7 @@ function staleMatch(res: Response, req: Request) {
       return false;
     }
 
-    const h = parseHeader(res.headers.get("cache-control"));
+    const h = parseHeader(res.headers.get("cache-control")!);
 
     if ("must-revalidate" in h) {
       return false;
@@ -141,7 +139,7 @@ function staleMatch(res: Response, req: Request) {
       return true;
     }
 
-    const h = parseHeader(req.headers.get("cache-control"));
+    const h = parseHeader(req.headers.get("cache-control")!);
 
     if ("max-stale" in h) {
       return (expires(res) + (parseInt(h["max-stale"], 10) * 1000)) >= 0;
@@ -164,7 +162,7 @@ function errorMatch(res: Response) {
       return false;
     }
 
-    const h = parseHeader(res.headers.get("cache-control"));
+    const h = parseHeader(res.headers.get("cache-control")!);
 
     if ("stale-if-error" in h) {
       return (parseInt(h["stale-if-error"], 10) * 1000) >= age(res);
@@ -186,8 +184,8 @@ function errorMatch(res: Response) {
 // **false**.
 function cacheSufficient(req: Request) {
   return !req.headers.has("cache-control") ||
-    (req.headers.get("cache-control").indexOf("no-store") === -1) ||
-    !("no-store" in parseHeader(req.headers.get("cache-control")));
+    (req.headers.get("cache-control")!.indexOf("no-store") === -1) ||
+    !("no-store" in parseHeader(req.headers.get("cache-control")!));
 }
 
 // Returns **true** if the client requires a cached response, otherwise
@@ -195,7 +193,7 @@ function cacheSufficient(req: Request) {
 // [RFC7234](https://tools.ietf.org/html/rfc7234#section-5.2.1.7).)
 function cacheNecessary(req: Request) {
   return (req.headers.has("cache-control")) &&
-    ("only-if-cached" in parseHeader(req.headers.get("cache-control")));
+    ("only-if-cached" in parseHeader(req.headers.get("cache-control")!));
 }
 
 function canCache(res: Response) {
@@ -270,8 +268,7 @@ export function newRequest(req: Request, headerFn?: (h: Headers) => void) {
     method: req.method,
     mode: "same-origin", // http://stackoverflow.com/a/35421858/11543
     redirect: req.redirect, // Should be 'manual'? http://stackoverflow.com/a/35421858/11543
-    referrer: req.referrer,
-    url: req.url
+    referrer: req.referrer
   }));
 
 }
@@ -334,7 +331,7 @@ export class Proxy {
           console.warn(req.url, "MISSING DATE HEADER");
         }
         // tslint:disable-next-line:no-shadowed-variable
-        caches.open(cache).then(cache => {
+        self.caches.open(cache).then(cache => {
           console.warn(req.url, "ADDING TO CACHE");
           cache.put(req, res.clone()); /* [1] */
         });
@@ -392,7 +389,7 @@ export class Proxy {
 
       // Look for responses matching `Request` `req` in the cache.
       // tslint:disable-next-line:no-shadowed-variable
-      return caches.open(cache).then(cache => {
+      return self.caches.open(cache).then(cache => {
         return cache.match(req).then(res => {
           if (res) { // `Response` received …
             if (freshMatch(res, req)) {
