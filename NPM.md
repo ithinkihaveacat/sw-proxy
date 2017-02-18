@@ -1,3 +1,11 @@
+Testing the package locally:
+
+```sh
+$ npm pack # generates sw-proxy-*.tgz
+$ cd ~/scratch/foo
+$ npm install /path/to/sw-proxy-*.tgz
+```
+
 Publishing to `npm`:
 
 ```sh
