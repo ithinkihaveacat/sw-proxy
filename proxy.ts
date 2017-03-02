@@ -217,7 +217,8 @@ export function newResponse(res: Response, headerFn?: (h: Headers) => void) {
   // read-only](https://developer.mozilla.org/en-US/docs/Web/API/Response/headers)…
   function cloneHeaders() {
     const headers = new Headers();
-    for (const kv of res.headers.entries()) {
+    // "as any" because: https://github.com/Microsoft/TypeScript/issues/14412
+    for (const kv of (res.headers as any).entries()) {
       headers.append(kv[0], kv[1]);
     }
     return headers;
@@ -251,7 +252,8 @@ export function newRequest(req: Request, headerFn?: (h: Headers) => void) {
   // read-only](https://developer.mozilla.org/en-US/docs/Web/API/Response/headers)…
   function cloneHeaders() {
     const headers = new Headers();
-    for (const kv of req.headers.entries()) {
+    // "as any" because: https://github.com/Microsoft/TypeScript/issues/14412
+    for (const kv of (req.headers as any).entries()) {
       headers.append(kv[0], kv[1]);
     }
     return headers;
