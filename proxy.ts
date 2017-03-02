@@ -180,24 +180,42 @@ function errorMatch(res: Response) {
 
 }
 
-// Returns **true** if the client will accept a cached response, otherwise
-// **false**.
+/**
+ * Returns `true` if the client will accept a cached response, otherwise
+ * `false`.
+ *
+ * @param {Request} req
+ * @returns boolean
+ */
 function cacheSufficient(req: Request) {
   return !req.headers.has("cache-control") ||
     (req.headers.get("cache-control")!.indexOf("no-store") === -1) ||
     !("no-store" in parseHeader(req.headers.get("cache-control")!));
 }
 
-// Returns **true** if the client requires a cached response, otherwise
-// **false**. (See
-// [RFC7234](https://tools.ietf.org/html/rfc7234#section-5.2.1.7).)
+/**
+ * Returns `true` if the client requires a cached response, otherwise `false`.
+ * (See [RFC7234](https://tools.ietf.org/html/rfc7234#section-5.2.1.7).)
+ *
+ * @param {Request} req
+ * @returns boolean
+ */
 function cacheNecessary(req: Request) {
   return (req.headers.has("cache-control")) &&
     ("only-if-cached" in parseHeader(req.headers.get("cache-control")!));
 }
 
+/**
+ * Returns `true` if the response can be cached, otherwise `false`.
+ *
+ * @param {Response} res
+ * @returns boolean
+ */
 function canCache(res: Response) {
   const h = parseHeader(res.headers.get("cache-control") || "");
+  // no-cache does not mean the response cannot be cached; it means that the
+  // cached response cannot be used without a conditional request to the origin.
+  // https://jakearchibald.com/2016/caching-best-practices/#pattern-2-mutable-content-always-server-revalidated
   return res.status === 200
     && !("no-store" in h)
     && (("max-age" in h) || ("s-maxage" in h));
