@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@types/service_worker_api@^0.0.8":
-  version "0.0.8"
-  resolved "https://registry.yarnpkg.com/@types/service_worker_api/-/service_worker_api-0.0.8.tgz#6754e5d1020a4766343f974eaf3abd47b699aaa0"
+"@types/service_worker_api@^0.0.9":
+  version "0.0.9"
+  resolved "https://registry.yarnpkg.com/@types/service_worker_api/-/service_worker_api-0.0.9.tgz#7269ff2fa0e27e23a38a22e8909534f63823dee8"
   dependencies:
     "@types/whatwg-fetch" "*"
 

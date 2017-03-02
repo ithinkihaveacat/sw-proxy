@@ -45,6 +45,6 @@
     "start": "$npm_execpath run examples:build && $npm_execpath run examples:docs && http-server -a localhost examples -c-1"
   },
   "dependencies": {
-    "@types/service_worker_api": "^0.0.8"
+    "@types/service_worker_api": "^0.0.9"
   }
 }
