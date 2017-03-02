@@ -8,8 +8,11 @@
     "strictNullChecks": true,
     "sourceMap": false,
     "moduleResolution": "node",
-    "declaration": true
+    // Don't check anything in node_modules/@types:
+    // https://www.typescriptlang.org/docs/handbook/tsconfig-json.html#types-typeroots-and-types
+    "types": []
   },
+  // TODO Fix examples/*.ts so this isn't necessary
   "files": [
     "proxy.ts",
     "router.ts"
