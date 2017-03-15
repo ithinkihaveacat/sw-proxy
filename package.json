@@ -22,14 +22,14 @@
   "jsnext:main": "dist/es6/proxy.js",
   "devDependencies": {
     "docco": "^0.7.0",
-    "eslint": "^3.16.1",
+    "eslint": "^3.17.1",
     "eslint-config-google": "^0.7.1",
     "http-server": "^0.9.0",
     "mocha": "^3.2.0",
     "node-fetch": "^1.6.3",
-    "rollup": "^0.41.4",
+    "rollup": "^0.41.5",
     "rollup-plugin-typescript": "^0.8.1",
-    "tslint": "^4.4.2",
+    "tslint": "^4.5.1",
     "typescript": "^2.2.1"
   },
   "scripts": {
