@@ -82,6 +82,16 @@ describe('Router', () => {
       assert.equal(m[0][0], 'bar');
       assert.equal(m[1][0], 'baz');
     });
+    it('should match http hostnames', () => {
+      const r = new Router({'^https?://foo.com/': true});
+      const m = r.match('http://foo.com/some/path?foo=bar');
+      assert.equal(m.length, 1);
+    });
+    it('should match https hostnames', () => {
+      const r = new Router({'^https?://foo.com/': true});
+      const m = r.match('https://foo.com/some/path?foo=bar');
+      assert.equal(m.length, 1);
+    });
 
   });
 
