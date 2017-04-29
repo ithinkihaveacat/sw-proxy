@@ -14,7 +14,7 @@ limitations under the License. */
 
 import {newResponse, Proxy, skipWaitingAndClaim} from "../proxy";
 
-let CACHE = "MYCACHE";
+const CACHE = "MYCACHE";
 
 skipWaitingAndClaim(self);
 
@@ -38,7 +38,7 @@ self.addEventListener("fetch", (event: FetchEvent) => {
   }
 
   // Configure the proxy
-  let proxy = new Proxy(CACHE, null, resFn);
+  const proxy = new Proxy(CACHE, null, resFn);
 
   event.respondWith(proxy.fetch(event.request));
 

@@ -32,7 +32,7 @@ limitations under the License. */
 
   return navigator.serviceWorker.register(script, options).then((r) => {
 
-    let incoming = r.installing || r.waiting;
+    const incoming = r.installing || r.waiting;
     if (r.active && !incoming) {
       return r;
     }

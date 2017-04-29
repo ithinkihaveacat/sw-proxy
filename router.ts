@@ -14,7 +14,7 @@ limitations under the License. */
 
 export interface Routes<T> {
   [k: string]: T;
-};
+}
 
 /**
  * Described as a "Router", and is designed to match URLs, but at its core, all
@@ -43,7 +43,7 @@ export class Router<T> {
   constructor(routes: Routes<T> = {}, prefix = "") {
     this.routes = Object.keys(routes).map<[RegExp, T]>(r => {
       return [new RegExp(prefix + r), routes[r]];
-    }, []);
+    });
   }
 
   /**

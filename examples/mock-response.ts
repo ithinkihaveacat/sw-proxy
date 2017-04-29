@@ -16,16 +16,16 @@ limitations under the License. */
 
 import {newResponse, Proxy, skipWaitingAndClaim} from "../proxy";
 
-let CACHE = "MYCACHE";
+const CACHE = "MYCACHE";
 
 // The response for `/quote.txt`.
 function getEntries(): { [k: string]: Response } {
-  let body = [
+  const body = [
     "The great roe is a mythological beast with the head",
     "of a lion and the body of a lion, though not the same",
     "lion."
   ].join(" ");
-  let res = new Response(body, {
+  const res = new Response(body, {
     headers: {
       "cache-control": "max-age=86400",
       "content-type": "text/plain",
@@ -43,7 +43,7 @@ skipWaitingAndClaim(self);
 
 // On "install", inject responses into cache.
 self.addEventListener("install", (event: ExtendableEvent) => {
-  let entries = getEntries();
+  const entries = getEntries();
   event.waitUntil(
     caches.open(CACHE).then((cache) => {
       return Promise.all(Object.keys(entries).reduce((acc: Array<Promise<void>>, url: string) => {
@@ -55,6 +55,6 @@ self.addEventListener("install", (event: ExtendableEvent) => {
 });
 
 self.addEventListener("fetch", (event: FetchEvent) => {
-  let proxy = new Proxy(CACHE);
+  const proxy = new Proxy(CACHE);
   event.respondWith(proxy.fetch(event.request));
 });

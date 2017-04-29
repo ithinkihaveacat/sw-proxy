@@ -32,7 +32,7 @@ function now() {
 function parseHeader(header: string): { [k: string]: string } {
   return !header.trim() ? {} : header.trim().split(/\s*,\s*/).sort().reduce(
     (acc: { [k: string]: string }, s: string) => {
-      let t = s.split(/\s*=\s*/, 2);
+      const t = s.split(/\s*=\s*/, 2);
       acc[t[0].toLowerCase()] = t[1];
       return acc;
     },

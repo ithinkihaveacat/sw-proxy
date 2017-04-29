@@ -16,7 +16,7 @@ limitations under the License. */
 
 import {newResponse, Proxy, skipWaitingAndClaim} from "../proxy";
 
-let CACHE = "MYCACHE";
+const CACHE = "MYCACHE";
 
 skipWaitingAndClaim(self);
 
@@ -48,7 +48,7 @@ self.addEventListener("install", (event: InstallEvent) => {
   // We're not handling the "fetch" event yet, so we need to pass requests
   // through the proxy "manually" (rather than just doing a `fetch()`), and
   // having that fire the `fetch` event.
-  let proxy = getProxy();
+  const proxy = getProxy();
 
   event.waitUntil(
     // Resolve when all images are loaded.
@@ -66,7 +66,7 @@ self.addEventListener("fetch", (event: FetchEvent) => {
 
   console.log("FETCH EVENT", event.request.url);
 
-  let proxy = getProxy();
+  const proxy = getProxy();
 
   event.respondWith(proxy.fetch(event.request));
 
