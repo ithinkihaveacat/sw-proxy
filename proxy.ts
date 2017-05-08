@@ -216,7 +216,7 @@ function canCache(res: Response) {
   // no-cache does not mean the response cannot be cached; it means that the
   // cached response cannot be used without a conditional request to the origin.
   // https://jakearchibald.com/2016/caching-best-practices/#pattern-2-mutable-content-always-server-revalidated
-  return res.status === 200
+  return res.status === 200 // should be res.ok? seems unexpected/confusing to cache !200?
     && !("no-store" in h)
     && (("max-age" in h) || ("s-maxage" in h));
 }
