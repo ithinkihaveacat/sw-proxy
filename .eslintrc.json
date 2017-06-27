@@ -1,6 +1,5 @@
 {
   "extends": "google",
-  "installedESLint": true,
   "rules": {
     "padded-blocks": 0,
     "require-jsdoc": 0
