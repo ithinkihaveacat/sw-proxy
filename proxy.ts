@@ -234,12 +234,11 @@ export function newResponse(res: Response, headerFn?: (h: Headers) => void) {
   // This function is necessary because sadly [res.headers is
   // read-only](https://developer.mozilla.org/en-US/docs/Web/API/Response/headers)…
   function cloneHeaders() {
-    const headers = new Headers();
-    // "as any" because: https://github.com/Microsoft/TypeScript/issues/14412
-    for (const kv of (res.headers as any).entries()) {
-      headers.append(kv[0], kv[1]);
+    const h = new Headers();
+    for (const kv of res.headers.entries()) {
+      h.append(kv[0], kv[1]);
     }
-    return headers;
+    return h;
   }
 
   const headers = headerFn ? headerFn(cloneHeaders()) : res.headers;
@@ -269,12 +268,11 @@ export function newRequest(req: Request, headerFn?: (h: Headers) => void) {
   // This function is necessary because sadly [res.headers is
   // read-only](https://developer.mozilla.org/en-US/docs/Web/API/Response/headers)…
   function cloneHeaders() {
-    const headers = new Headers();
-    // "as any" because: https://github.com/Microsoft/TypeScript/issues/14412
-    for (const kv of (req.headers as any).entries()) {
-      headers.append(kv[0], kv[1]);
+    const h = new Headers();
+    for (const kv of req.headers.entries()) {
+      h.append(kv[0], kv[1]);
     }
-    return headers;
+    return h;
   }
 
   const headers = headerFn ? headerFn(cloneHeaders()) : req.headers;
