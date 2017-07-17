@@ -27,8 +27,6 @@
     "http-server": "^0.10.0",
     "mocha": "^3.4.2",
     "node-fetch": "^1.7.1",
-    "rollup": "^0.43.0",
-    "rollup-plugin-typescript": "^0.8.1",
     "tslint": "^5.4.3",
     "typescript": "^2.4.1"
   },
@@ -40,8 +38,8 @@
     "test:watch": "$npm_execpath run test -- -w",
     "lint": "eslint test/*.js && tslint router.ts proxy.ts examples/*.ts",
     "printenv": "printenv",
-    "examples:build": "cd examples ; for f in *.ts ; do rollup -c -f iife -i $f -o `basename $f .ts`.js ; done",
-    "examples:docs": "docco -o examples/docs examples/*.ts",
+    "// examples:build": "cd examples ; for f in *.ts ; do rollup -c -f iife -i $f -o `basename $f .ts`.js ; done",
+    "// examples:docs": "docco -o examples/docs examples/*.ts",
     "start": "$npm_execpath run examples:build && $npm_execpath run examples:docs && http-server -a localhost examples -c-1"
   }
 }
