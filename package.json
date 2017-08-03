@@ -1,6 +1,6 @@
 {
   "name": "sw-proxy",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "A RFC-compliant HTTP proxy library for service workers.",
   "keywords": [
     "service-worker",
