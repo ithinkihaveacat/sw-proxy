@@ -70,6 +70,18 @@ export class Router<T> {
   }
 
   /**
+   * Convenience function: if there is at least one match, returns the first
+   * matching value, otherwise null.
+   *
+   * @param {string} s string to match against regexps
+   * @returns {T|null}
+   */
+  public firstMatch(s: string): T|null {
+    const matches = this.match(s);
+    return matches.length > 0 ? matches[0][0] : null;
+  }
+
+  /**
    * Use `match()` if possible; `loop()` is needed if you have a more
    * complicated matching problem, such as the need to replicate [Express's
    * `next()`](https://expressjs.com/en/guide/routing.html) method or similar.

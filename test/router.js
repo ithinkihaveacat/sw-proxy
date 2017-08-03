@@ -95,6 +95,18 @@ describe('Router', () => {
 
   });
 
+  describe('#firstMatch()', () => {
+    it('should return null', () => {
+      const r = new Router({'foo': 'bar'});
+      assert.deepEqual(r.firstMatch('/bar'), null);
+    });
+    it('should return the first match', () => {
+      const r = new Router({'foo': 'bar', '.*': 'baz'});
+      const m = r.firstMatch('foo');
+      assert.deepEqual(m, 'bar');
+    });
+  });
+
   describe('#loop()', () => {
 
     it('should return a single match', () => {
