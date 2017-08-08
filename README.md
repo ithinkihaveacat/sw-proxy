@@ -49,4 +49,4 @@ $ yarn test # or npm test
 
 ## Author
 
-Michael Stillwell <mjs@beebo.org>
+Michael Stillwell &lt;mjs@beebo.org&gt;
