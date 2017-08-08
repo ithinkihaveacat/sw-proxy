@@ -27,12 +27,13 @@
     "http-server": "^0.10.0",
     "mocha": "^3.4.2",
     "node-fetch": "^1.7.1",
+    "rollup": "^0.45.2",
     "tslint": "^5.4.3",
     "typescript": "^2.4.1"
   },
   "scripts": {
     "preversion": "$npm_execpath test",
-    "prepare": "tsc -p tsconfig.json --sourceMap -d --module commonjs --outDir dist/commonjs && tsc -p tsconfig.json --sourceMap -d --module es2015 --outDir dist/es2015",
+    "prepare": "tsc -p tsconfig.json --sourceMap -d --module commonjs --outDir dist/commonjs && tsc -p tsconfig.json --sourceMap -d --module es2015 --outDir dist/es2015 && rollup dist/es2015/proxy.js --format iife --name proxy --output dist/browser/sw-proxy.js",
     "postpublish": "git push && git push --tags",
     "test": "$npm_execpath run prepare && $npm_execpath run lint && mocha",
     "test:watch": "$npm_execpath run test -- -w",
