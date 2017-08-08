@@ -12,9 +12,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. */
 
-// There doesn't seem to be an authoritative source of service worker
-// definitions; reference these hand-written definitions for now.
-
 function now() {
   return new Date().getTime();
 }
