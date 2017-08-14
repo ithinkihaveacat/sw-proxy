@@ -66,6 +66,13 @@ describe('Router', () => {
       assert.equal(m[0][1][1], 'clem'); // first capture
       assert.equal(m[0][1][2], '54'); // second capture
     });
+    it('should match on regexp /foo\\?token=(.*)', () => {
+      const r = new Router({'/foo\\?token=(.*)': 'bar'});
+      const m = r.match('/foo?token=quux');
+      assert.equal(m.length, 1);
+      assert.equal(m[0][0], 'bar');
+      assert.equal(m[0][1][1], 'quux');
+    });
     it('should return a single match', () => {
       const r = new Router({'foo1': 'bar1', 'foo2': 'bar2'});
       const m1 = r.match('foo1');
