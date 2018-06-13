@@ -56,7 +56,7 @@ export class Router<T> {
    *
    * @memberOf Router
    */
-  public match(s: string): Array<[T, RegExpMatchArray]> {
+  public match(s?: string): Array<[T, RegExpMatchArray]> {
     if (!s || !s.match) {
       return [];
     }

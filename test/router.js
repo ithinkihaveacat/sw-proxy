@@ -1,3 +1,5 @@
+// @ts-check
+
 const Router = require('../dist/commonjs/router.js').Router;
 
 const assert = require('assert');

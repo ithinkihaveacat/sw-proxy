@@ -1,15 +1,17 @@
+// @ts-check
+
 const parseHeader = require('../dist/commonjs/proxy.js')._parseHeader;
-// const freshMatch = require('../dist/commonjs/proxy.js')._freshMatch;
 const canCache = require('../dist/commonjs/proxy.js')._canCache;
-const Headers = require('node-fetch').Headers;
 
-const assert = require('assert');
+const {deepEqual, equal} = require('assert');
 
-class Response {
-  constructor(h) {
-    this.status = 200;
-    this.headers = new Headers(h);
-  }
+function newResponse(h) {
+  return {
+    headers: {
+      get: (k) => h[k],
+    },
+    status: 200,
+  };
 }
 
 describe('Proxy', () => {
@@ -18,22 +20,22 @@ describe('Proxy', () => {
 
     it('parses an empty header', () => {
       const h = parseHeader('');
-      assert.deepEqual(h, {});
+      deepEqual(h, {});
     });
 
     it('parses foo=bar', () => {
       const h = parseHeader('foo=bar');
-      assert.deepEqual(h, {'foo': 'bar'});
+      deepEqual(h, {foo: 'bar'});
     });
 
     it('parses foo=bar,baz', () => {
       const h = parseHeader('foo=bar,baz');
-      assert.deepEqual(h, {'foo': 'bar', 'baz': undefined});
+      deepEqual(h, {foo: 'bar', baz: undefined});
     });
 
     it('parses foo=bar,    BAZ,  quuz=43', () => {
       const h = parseHeader('foo=bar,    BAZ,  quux=43');
-      assert.deepEqual(h, {'foo': 'bar', 'baz': undefined, 'quux': '43'});
+      deepEqual(h, {foo: 'bar', baz: undefined, quux: '43'});
     });
 
   });
@@ -50,14 +52,18 @@ describe('Proxy', () => {
       [{'cache-control': 's-maxage=7773, qqq=public, foo=bar'}, true],
       [{'cache-control': 'qqq=public, foo=bar'}, false],
       [{
-        'expires': 'Tue, 17 Jan 2012 00:49:02 GMT',
         'cache-control': 'public, max-age=31536000',
+        'expires': 'Tue, 17 Jan 2012 00:49:02 GMT',
       }, true],
     ].forEach((d) => {
       it(`returns ${JSON.stringify(d[1])} for ${JSON.stringify(d[0])}`, () => {
-        const res = new Response(d[0]);
+        const res = newResponse(d[0]);
         const expected = d[1];
-        assert.equal(canCache(res), expected, JSON.stringify(d[0]));
+        equal(
+          canCache(/** @type {Response} */ (res)),
+          expected,
+          JSON.stringify(d[0])
+        );
       });
     });
 

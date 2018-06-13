@@ -226,7 +226,7 @@ function canCache(res: Response) {
  * @param  {(h: Headers) => void} headerFn passed mutatable `Headers`
  * @return {Promise<Response>}
  */
-export function newResponse(res: Response, headerFn?: (h: Headers) => void): Promise<Response> {
+export function newResponse(res: Response, headerFn?: (h: Headers) => Headers): Promise<Response> {
 
   // This function is necessary because sadly [res.headers is
   // read-only](https://developer.mozilla.org/en-US/docs/Web/API/Response/headers)…
@@ -260,7 +260,7 @@ export function newResponse(res: Response, headerFn?: (h: Headers) => void): Pro
  * @param  {(h: Headers) => void} headerFn passed mutable `Headers`
  * @return {Promise<Request>}
  */
-export function newRequest(req: Request, headerFn?: (h: Headers) => void): Promise<Request> {
+export function newRequest(req: Request, headerFn?: (h: Headers) => Headers): Promise<Request> {
 
   // This function is necessary because sadly [res.headers is
   // read-only](https://developer.mozilla.org/en-US/docs/Web/API/Response/headers)…

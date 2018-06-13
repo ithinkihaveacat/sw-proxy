@@ -21,15 +21,17 @@
   "module": "dist/es2015/proxy.js",
   "types": "dist/es2015/proxy.d.ts",
   "devDependencies": {
-    "docco": "^0.7.0",
-    "eslint": "^4.1.1",
+    "@types/node-fetch": "^2.1.1",
+    "docco": "^0.8.0",
+    "eslint": "^4.19.1",
     "eslint-config-google": "^0.9.1",
-    "http-server": "^0.10.0",
-    "mocha": "^3.4.2",
-    "node-fetch": "^1.7.1",
-    "rollup": "^0.45.2",
-    "tslint": "^5.4.3",
-    "typescript": "^2.4.1"
+    "http-server": "^0.11.1",
+    "mocha": "^5.2.0",
+    "node-fetch": "^2.1.2",
+    "rollup": "^0.60.4",
+    "ts-node": "^6.1.1",
+    "tslint": "^5.10.0",
+    "typescript": "^2.9.1"
   },
   "scripts": {
     "preversion": "$npm_execpath test",
